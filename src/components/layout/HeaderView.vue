@@ -1,19 +1,28 @@
 <script setup>
-// import { useAuthStore } from "@/stores/auth";
-import { useRouter } from "vue-router";
-import { computed, ref, reactive } from "vue";
+import { ref } from "vue";
+import { RouterLink, RouterView } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import userApi from "@/api/user";
+const { VITE_IMAGE_BASE_URL } = import.meta.env;
 
-// const authStore = useAuthStore();
-const router = useRouter();
-const user = ref(null);
+const authStore = useAuthStore();
+const userInfo = ref(null);
 
-// const user = computed(() => authStore.user);
-// const logout = () => {
-//   if (!confirm("로그아웃 하시겠습니까?")) return;
-//   authStore.logout();
+const imageUrl = ref("");
+// console.log("image : ", imageURL.value);
 
-//   router.push("/"); //홈으로
-// };
+const getUserInfo = async () => {
+  const { data } = await userApi.get("/profile");
+  console.log(data);
+  userInfo.value = data;
+  if (userInfo.value) {
+    imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.result.imageKey;
+    console.log("imageKey : " + imageUrl.value);
+  }
+};
+
+getUserInfo();
+console.log("user", userInfo);
 </script>
 
 <template>
@@ -21,26 +30,19 @@ const user = ref(null);
     <RouterLink to="/"
       ><img src="@/assets/img/logo.png" alt="홈 버튼"
     /></RouterLink>
+
     <nav>
-      <ul>
-        <li>피드</li>
-        <li>마이플랜</li>
-        <li>프로필</li>
-        <!-- 프로필 -> 마이페이지 -->
-
-        <!-- <li v-if="">검색창</li> -->
-        <!-- <li><RouterLink to="">피드</RouterLink></li>
-        <li><RouterLink to=">`My plan`</RouterLink></li>
-        <li><RouterLink to="">마이페이지</RouterLink></li> -->
-      </ul>
-
-      <ul v-if="user == null">
-        <!-- <li><RouterLink to="/login">로그인</RouterLink></li> -->
-        <li>로그인</li>
+      <ul v-if="userInfo == null">
+        <li><RouterLink to="/login">로그인</RouterLink></li>
       </ul>
       <ul v-else>
-        <!-- <li>{{ user.id }}님 접속 중</li>
-        <li @click="logout">로그아웃</li> -->
+        <li>피드</li>
+        <li>마이플랜</li>
+        <li>
+          <img class="profile" :src="imageUrl" alt="" />{{
+            userInfo.result.nickname
+          }}님
+        </li>
       </ul>
     </nav>
   </header>
@@ -52,11 +54,19 @@ const user = ref(null);
 }
 header {
   border: 1px solid black;
-
-  ul {
-    display: flex;
-    justify-content: space-around;
-    margin-left: 5px;
-  }
+  display: flex;
+  justify-content: space-between;
+}
+ul {
+  border: 1px solid blue;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+li {
+  padding-left: 30px;
+}
+.profile {
+  width: 100px;
 }
 </style>

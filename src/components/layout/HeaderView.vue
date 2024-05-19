@@ -36,7 +36,7 @@ console.log("user", userInfo);
       </ul>
       <ul v-else>
         <li>피드</li>
-        <li>마이플랜</li>
+        <li><RouterLink to="/plan">마이플랜</RouterLink></li>
         <li>
           <img class="profile" :src="imageUrl" alt="" />{{
             userInfo.result.nickname

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import HomeView from "../views/HomeView.vue";
+import HomeView from "../views/home/HomeView.vue";
 import LoginView from "@/views/user/LoginView.vue";
+import PlanView from "@/views/plan/PlanView.vue";
+import PlanDetailView from "@/views/plan_detail/PlanDetailView.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
@@ -27,6 +29,16 @@ const router = createRouter({
         auth.setAccessToken(token);
         next({ path: "/" });
       },
+    },
+    {
+      path: "/plan",
+      name: "Plan",
+      component: PlanView,
+    },
+    {
+      path: "/plan/{:id}",
+      name: "PlanDetail",
+      component: PlanDetailView,
     },
   ],
 });

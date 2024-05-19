@@ -1,10 +1,20 @@
 <script setup>
-import LoginView from './user/LoginView.vue';
+import { RouterLink, RouterView } from "vue-router";
+import DisasterInfoView from "@/components/home/DisasterInfoView.vue";
+import NewsView from "@/components/home/NewsView.vue";
+import RankingView from "@/components/home/RankingView.vue";
+import SafeGuideView from "@/components/home/SafeGuideView.vue";
+import SearchView from "@/components/home/SearchView.vue";
 </script>
 
 <template>
-  <main>
-    <h2>메인화면</h2>
-    <LoginView />
-  </main>
+  <div>
+    <SearchView />
+    <RankingView />
+    <SafeGuideView />
+    <DisasterInfoView />
+    <NewsView />
+  </div>
 </template>
+
+<style scoped></style>

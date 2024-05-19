@@ -1,9 +1,10 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import LoginView from './user/LoginView.vue';
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <h2>메인화면</h2>
+    <LoginView />
   </main>
 </template>

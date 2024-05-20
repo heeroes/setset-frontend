@@ -23,15 +23,16 @@ export const useAuthStore = defineStore(
       //토큰 정보 및 유저 정보 삭제
       accessToken.value = null;
       user.value = null;
+      userInfo.value = null;
       localStorage.clear();
     };
 
     const getUserInfo = async () => {
       const { data } = await userApi.get("/profile");
       console.log(data);
-      userInfo.value = data;
+      userInfo.value = data.result;
       if (userInfo.value) {
-        imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.result.imageKey;
+        imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.imageKey;
         console.log("imageKey : " + imageUrl.value);
       }
     };

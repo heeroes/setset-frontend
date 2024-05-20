@@ -1,16 +1,16 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import DisasterInfoView from "@/components/home/DisasterInfoView.vue";
 import UserInfoView from "@/components/user/UserInfoView.vue"
-import MyPlanView from "@/components/user/MyPlanView.vue"
 import MyGroupView from "@/components/user/MyGroupView.vue"
+import PlanListView from "@/components/plan/PlanListView.vue";
 
 </script>
 
 <template>
   <div>
     <UserInfoView />
-    <MyPlanView />
+    <h1>🎈나의 여행 계획</h1>
+    <PlanListView />
     <MyGroupView/>
   </div>
 </template>

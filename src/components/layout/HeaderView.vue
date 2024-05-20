@@ -1,28 +1,12 @@
 <script setup>
-import { ref } from "vue";
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import userApi from "@/api/user";
-const { VITE_IMAGE_BASE_URL } = import.meta.env;
+import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
-const userInfo = ref(null);
+const { userInfo, imageUrl } = storeToRefs(authStore);
 
-const imageUrl = ref("");
-// console.log("image : ", imageURL.value);
-
-const getUserInfo = async () => {
-  const { data } = await userApi.get("/profile");
-  console.log(data);
-  userInfo.value = data;
-  if (userInfo.value) {
-    imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.result.imageKey;
-    console.log("imageKey : " + imageUrl.value);
-  }
-};
-
-getUserInfo();
-console.log("user", userInfo);
+console.log("header userInfo", userInfo);
 </script>
 
 <template>

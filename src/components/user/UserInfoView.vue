@@ -1,30 +1,29 @@
 <script setup>
-import { ref } from "vue";
-import userApi from "@/api/user";
+import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
 
-const { VITE_IMAGE_BASE_URL } = import.meta.env;
-const userInfo = ref(null);
-const imageUrl = ref("");
-
-const getUserInfo = async () => {
-  const { data } = await userApi.get("/profile");
-  console.log(data);
-  userInfo.value = data.result;
-  if (userInfo.value) {
-    imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.imageKey;
-    console.log("imageKey : " + imageUrl.value);
-  }
-};
-getUserInfo();
+const authStore = useAuthStore();
+const { userInfo, imageUrl } = storeToRefs(authStore);
 </script>
 
 <template>
   <div>
     <h1>유저정보</h1>
     <ul>
-      <li>{{ userInfo.nickname}}</li>
+      <img class="profile-image" :src="imageUrl" alt="" />
+      <li>{{ userInfo.result.nickname }}</li>
+      <li>{{ userInfo.result.email }}</li>
     </ul>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+* {
+  list-style-type: none;
+}
+.profile-image {
+  border-radius: 50%;
+  height: 124px;
+  width: 124px;
+}
+</style>

@@ -23,9 +23,11 @@ console.log("header userInfo", userInfo);
         <li>피드</li>
         <li>마이플랜</li>
         <li>
-          <img class="profile" :src="imageUrl" alt="" />{{
-            userInfo.result.nickname
-          }}님
+          <RouterLink to="/my-page">
+            <img class="profile" :src="imageUrl" alt="" />{{
+              userInfo.result.nickname
+            }}님
+          </RouterLink>
         </li>
       </ul>
     </nav>

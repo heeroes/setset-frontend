@@ -25,7 +25,7 @@ console.log("header userInfo", userInfo);
         <li>
           <RouterLink to="/my-page">
             <img class="profile" :src="imageUrl" alt="" />{{
-              userInfo.result.nickname
+              userInfo.nickname
             }}님
           </RouterLink>
         </li>

@@ -3,12 +3,14 @@ import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import userApi from "@/api/user";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const authStore = useAuthStore();
 const { userInfo, imageUrl } = storeToRefs(authStore);
 const showModal = ref(false);
 const newProfileImage = ref(null);
-const nickname = ref(userInfo.value.result.nickname);
+const nickname = ref(userInfo.value.nickname);
 const updateForm = ref(null);
 const editProfile = () => {
   console.log("수정 버튼 누르기");
@@ -54,6 +56,12 @@ const updateProfile = async () => {
     }
   }
 };
+
+const logout = () => {
+  if (!confirm("로그아웃 하시겠습니까?")) return;
+  authStore.logout();
+  router.push("/"); //홈으로 이동
+};
 </script>
 
 <template>
@@ -69,8 +77,9 @@ const updateProfile = async () => {
         </svg>
       </button>
     </div>
-    <li>{{ userInfo.result.nickname }}</li>
-    <li>{{ userInfo.result.email }}</li>
+    <li>{{ userInfo.nickname }}</li>
+    <li>{{ userInfo.email }}</li>
+    <button @click="logout">로그아웃</button>
   </ul>
 
   <!-- Modal -->

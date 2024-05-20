@@ -5,7 +5,6 @@ import LoginView from "@/views/user/LoginView.vue";
 import PlanView from "@/views/plan/PlanView.vue";
 import PlanDetailView from "@/views/plan_detail/PlanDetailView.vue";
 import { useAuthStore } from "@/stores/auth";
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

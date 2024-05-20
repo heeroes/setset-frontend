@@ -1,15 +1,19 @@
 <script setup>
 import { ref } from 'vue';
+import groupApi from "@/api/group";
 const emit = defineEmits(["groupSelected"])
-
-
 // 그룹 목록 상태 변수
-const groups = ref([
-  { id: 1, name: '그룹 1' },
-  { id: 2, name: '그룹 2' },
-  { id: 3, name: '그룹 3' },
-  // 다른 그룹들도 추가할 수 있습니다.
-]);
+const groups = ref([]);
+
+const getGroupList = async () => {
+  const { data } = await groupApi.get();
+  console.log("response : ", data);
+  groups.value = data.result;
+};
+getGroupList();
+
+
+
 
 // 그룹 선택 이벤트를 발생시키는 함수
 const selectGroup = (group) => {

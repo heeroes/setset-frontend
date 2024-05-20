@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/user/LoginView.vue";
+import GroupFeedView from "@/views/group/GroupFeedView.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
@@ -28,6 +29,11 @@ const router = createRouter({
         next({ path: "/" });
       },
     },
+    {
+      path:"/feed",
+      name:"GroupFeed",
+      component:GroupFeedView
+    }
   ],
 });
 

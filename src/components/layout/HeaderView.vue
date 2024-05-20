@@ -23,9 +23,7 @@ console.log("header userInfo", userInfo);
         <li>피드</li>
         <li>마이플랜</li>
         <li>
-          <img class="profile" :src="imageUrl" alt="" />{{
-            userInfo.result.nickname
-          }}님
+          <img class="profile" :src="imageUrl" alt="" />님
         </li>
       </ul>
     </nav>

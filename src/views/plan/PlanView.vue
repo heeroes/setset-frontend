@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter, RouterView, RouterLink } from "vue-router";
-import axios from "axios";
+import { useRouter, RouterView } from "vue-router";
 import planApi from "@/api/plan";
+import PlanCreateView from "@/views/plan/PlanCreateView.vue";
 
 const router = useRouter();
 const plans = ref([]);
@@ -25,7 +25,6 @@ const isVisible = ref(false);
 const addPlan = () => {
   isVisible.value = !isVisible.value;
 };
-const inputInfo = ref({});
 const detailPlan = (plan) => {
   console.log("plan id : ", plan.id);
   router.push({ name: "PlanDetail", params: { id: plan.id } });
@@ -33,6 +32,7 @@ const detailPlan = (plan) => {
 
 const close = () => {
   isVisible.value = false;
+  getPlanList();
 };
 
 onMounted(() => {
@@ -58,21 +58,10 @@ onMounted(() => {
         </div>
       </div>
       <div class="card" @click="addPlan"><h1>+</h1></div>
-      <div v-if="isVisible" class="modal-overlay">
-        <div class="modal">
-          <slot>
-            <form @submit.prevent="createPlan">
-              <input type="text" />
-            </form>
-          </slot>
-          <button @click="close">Close</button>
-        </div>
-      </div>
-
-      <!-- <RouterLink to="/create" @close="close"></RouterLink>
-      <RouterView /> -->
+      <PlanCreateView :isVisible="isVisible" @close="close" />
     </div>
   </div>
+  <RouterView />
 </template>
 
 <style scoped>

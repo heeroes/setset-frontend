@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const planApi = axios.create({
-  baseURL: "http://localhost:80/api/v1/plan",
+const groupApi = axios.create({
+  baseURL: "http://localhost:80/api/v1/group",
 });
 
-planApi.interceptors.request.use((config) => {
+groupApi.interceptors.request.use((config) => {
   const token = localStorage.getItem("access-token");
   console.log("token:" + token);
   if (token) {
@@ -13,4 +13,4 @@ planApi.interceptors.request.use((config) => {
   return config;
 });
 
-export default planApi;
+export default groupApi;

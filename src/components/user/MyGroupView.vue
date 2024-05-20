@@ -41,6 +41,7 @@ const createGroup = async () => {
       console.log("그룹이름 :", groupInfo.value);
       const response = await groupApi.post("", groupInfo.value);
       alert("그룹 생성이 완료되었습니다.");
+      getGroupList();
       closeCreateGroupModal();
     } catch (error) {}
   } else {

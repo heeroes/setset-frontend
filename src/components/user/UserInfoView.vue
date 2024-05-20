@@ -43,16 +43,10 @@ const updateProfile = async () => {
       },
     });
     console.log(response);
+    alert("프로필 수정이 완료되었습니다.");
     authStore.getUserInfo();
-    // // 서버 응답 처리
-    // if (response.data.success) {
-    //   // 이미지 URL과 nickname을 업데이트
-    //   if (newProfileImage.value) {
-    //     imageUrl.value = newProfileImage.value;
-    //   }
-    //   userInfo.value.result.nickname = nickname.value;
-    // }
-    // showModal.value = false;
+    closeModal();
+
   } catch (error) {
     console.error("유저 정보 수정:", error);
     if (error.response.data && error.response.data.result) {

@@ -36,7 +36,7 @@ const addToCart = (att) => {
       <span class="cont">
         {{ att.addr }}
         <br />
-        추가 수 : {{ att.popularity }}
+        👀 : {{ att.popularity }}
       </span>
       <div class="overlay" :class="{ active: att.isActive }">
         {{ att.overlayText }}

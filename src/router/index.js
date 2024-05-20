@@ -6,6 +6,8 @@ import PlanView from "@/views/plan/PlanView.vue";
 import PlanDetailView from "@/views/plan_detail/PlanDetailView.vue";
 import PlanListView from "@/components/plan/PlanListView.vue";
 import { useAuthStore } from "@/stores/auth";
+import MyPageView from "@/views/user/MyPageView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -13,6 +15,11 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: HomeView,
+    },
+    {
+      path:"/my-page",
+      name:"MyPage",
+      component:MyPageView
     },
     {
       path: "/login",

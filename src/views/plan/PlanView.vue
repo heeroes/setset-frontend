@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, RouterView, RouterLink } from "vue-router";
 import axios from "axios";
 import planApi from "@/api/plan";
 
@@ -12,7 +12,6 @@ function fetchRandomImage() {
   return `https://picsum.photos/600/400?random=${Math.random()}`;
 }
 
-// 계획 목록을 가져오는 함수
 const getPlanList = async () => {
   const { data } = await planApi.get();
   console.log("response : ", data);
@@ -22,11 +21,18 @@ const getPlanList = async () => {
   }));
 };
 
-const addPlan = () => {};
-
+const isVisible = ref(false);
+const addPlan = () => {
+  isVisible.value = !isVisible.value;
+};
+const inputInfo = ref({});
 const detailPlan = (plan) => {
   console.log("plan id : ", plan.id);
   router.push({ name: "PlanDetail", params: { id: plan.id } });
+};
+
+const close = () => {
+  isVisible.value = false;
 };
 
 onMounted(() => {
@@ -52,11 +58,44 @@ onMounted(() => {
         </div>
       </div>
       <div class="card" @click="addPlan"><h1>+</h1></div>
+      <div v-if="isVisible" class="modal-overlay">
+        <div class="modal">
+          <slot>
+            <form @submit.prevent="createPlan">
+              <input type="text" />
+            </form>
+          </slot>
+          <button @click="close">Close</button>
+        </div>
+      </div>
+
+      <!-- <RouterLink to="/create" @close="close"></RouterLink>
+      <RouterView /> -->
     </div>
   </div>
 </template>
 
 <style scoped>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  max-width: 100%;
+}
+
 .img {
   height: 300px;
   background-image: url("@/assets/img/plan/plan_list.png");

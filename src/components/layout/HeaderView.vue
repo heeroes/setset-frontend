@@ -11,17 +11,16 @@ console.log("header userInfo", userInfo);
 
 <template>
   <header>
-    <RouterLink to="/"
+    <RouterLink :to="{ name: 'Home' }"
       ><img src="@/assets/img/logo.png" alt="홈 버튼"
     /></RouterLink>
-
     <nav>
       <ul v-if="userInfo == null">
-        <li><RouterLink to="/login">로그인</RouterLink></li>
+        <li><RouterLink :to="{ name: 'Login' }">로그인</RouterLink></li>
       </ul>
       <ul v-else>
         <li>피드</li>
-        <li>마이플랜</li>
+        <li><RouterLink :to="{ name: 'Plan' }">마이플랜</RouterLink></li>
         <li>
           <RouterLink to="/my-page">
             <img class="profile" :src="imageUrl" alt="" />{{

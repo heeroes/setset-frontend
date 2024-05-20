@@ -1,5 +1,4 @@
 import axios from "axios";
-import { localAxios } from "@/api/http-commons";
 
 const planApi = axios.create({
   baseURL: "http://localhost:80/api/v1/plan",

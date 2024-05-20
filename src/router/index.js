@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+
+import HomeView from "../views/home/HomeView.vue";
 import LoginView from "@/views/user/LoginView.vue";
+import PlanView from "@/views/plan/PlanView.vue";
+import PlanDetailView from "@/views/plan_detail/PlanDetailView.vue";
+import PlanListView from "@/components/plan/PlanListView.vue";
 import { useAuthStore } from "@/stores/auth";
 import MyPageView from "@/views/user/MyPageView.vue";
 
@@ -33,6 +37,23 @@ const router = createRouter({
         auth.getUserInfo();
         next({ path: "/" });
       },
+    },
+    {
+      path: "/plan",
+      name: "Plan",
+      component: PlanView,
+      children: [
+        {
+          path: "list",
+          name: "PlanList",
+          component: PlanListView,
+        },
+      ],
+    },
+    {
+      path: "/plan/:id",
+      name: "PlanDetail",
+      component: PlanDetailView,
     },
   ],
 });

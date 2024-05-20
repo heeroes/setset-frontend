@@ -24,6 +24,7 @@ const router = createRouter({
         console.log(token);
         const auth = useAuthStore();
         auth.setAccessToken(token);
+        auth.getUserInfo();
         next({ path: "/" });
       },
     },

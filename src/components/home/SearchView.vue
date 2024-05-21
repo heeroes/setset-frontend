@@ -87,7 +87,7 @@ const searchKeyword = async () => {
 /* styling of whole input container */
 .form {
   --timing: 0.3s;
-  --width-of-input: 200px;
+  --width-of-input: 80%;
   --height-of-input: 40px;
   --border-height: 2px;
   --input-bg: #fff;

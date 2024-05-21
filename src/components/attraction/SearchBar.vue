@@ -12,11 +12,12 @@ const searchKeyword = async () => {
   console.log("response : ", data.result.attractions);
   router.push({ path: "/search", query: { keyword: keyword.value } });
 };
+const clearInput = () =>{
+  keyword.value = "";
+}
 </script>
 
 <template>
-  <div class="img">
-    <h2>setset에서 안전한 여행지를 찾아보세요.</h2>
     <form class="form" @submit.prevent="searchKeyword">
       <button type="button">
         <svg
@@ -65,16 +66,9 @@ const searchKeyword = async () => {
         </svg>
       </button>
     </form>
-  </div>
 </template>
 
 <style scoped>
-.img {
-  height: 300px;
-  background-image: url("@/assets/img/main_image.jpg");
-  background-position: center;
-  background-size: cover;
-}
 
 /* From uiverse.io by @satyamchaudharydev */
 /* removing default style of button */
@@ -87,7 +81,7 @@ const searchKeyword = async () => {
 /* styling of whole input container */
 .form {
   --timing: 0.3s;
-  --width-of-input: 80%;
+  --width-of-input: 250px;
   --height-of-input: 40px;
   --border-height: 2px;
   --input-bg: #fff;

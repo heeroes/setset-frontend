@@ -9,6 +9,7 @@ import GroupFeedView from "@/views/group/GroupFeedView.vue";
 import { useAuthStore } from "@/stores/auth";
 import MyPageView from "@/views/user/MyPageView.vue";
 import NewArticle from "@/components/group/NewArticle.vue";
+import SearchAttractionView from "@/views/searchAttraction/SearchAttractionView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +60,11 @@ const router = createRouter({
       path: "/new-article/:id",
       name: "NewArticle",
       component: NewArticle,
+    },
+    {
+      path: "/search",
+      name: "SearchAttraction",
+      component: SearchAttractionView,
     },
   ],
 });

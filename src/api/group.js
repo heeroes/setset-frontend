@@ -1,11 +1,10 @@
 import axios from "axios";
-import { localAxios } from "@/api/http-commons";
 
-const userApi = axios.create({
-  baseURL: "http://localhost:80/api/v1/user",
+const groupApi = axios.create({
+  baseURL: "http://localhost:80/api/v1/group",
 });
 
-userApi.interceptors.request.use((config) => {
+groupApi.interceptors.request.use((config) => {
   const token = localStorage.getItem("access-token");
   console.log("token:" + token);
   if (token) {
@@ -14,4 +13,4 @@ userApi.interceptors.request.use((config) => {
   return config;
 });
 
-export default userApi;
+export default groupApi;

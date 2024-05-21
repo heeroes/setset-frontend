@@ -8,7 +8,7 @@ import Footer from "@/components/layout/FooterView.vue";
 <template>
   <Header />
   <div>
-    <RouterLink :to="Home"></RouterLink>
+    <RouterLink :to="{ name: 'Home' }"></RouterLink>
     <RouterView />
   </div>
   <Footer />

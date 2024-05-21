@@ -4,10 +4,12 @@ import axios from "axios";
 
 const alarms = ref("");
 const getDisasterAlarm = async () => {
-  const url = "http://localhost/api/v1/safe/info/disaster/alarm";
+  const url = "http://localhost/api/v1/safe/info/disaster";
   const { data } = await axios.get(url);
-  console.log("response : ", data);
+  console.log("response : ", data.result);
+  alarms.value = data.result.alarms;
 };
+getDisasterAlarm();
 </script>
 
 <template>

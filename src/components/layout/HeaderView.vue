@@ -1,47 +1,33 @@
 <script setup>
-import { ref } from "vue";
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import userApi from "@/api/user";
-const { VITE_IMAGE_BASE_URL } = import.meta.env;
+import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
-const userInfo = ref(null);
+const { userInfo, imageUrl } = storeToRefs(authStore);
 
-const imageUrl = ref("");
-// console.log("image : ", imageURL.value);
-
-const getUserInfo = async () => {
-  const { data } = await userApi.get("/profile");
-  console.log(data);
-  userInfo.value = data;
-  if (userInfo.value) {
-    imageUrl.value = VITE_IMAGE_BASE_URL + userInfo.value.result.imageKey;
-    console.log("imageKey : " + imageUrl.value);
-  }
-};
-
-getUserInfo();
-console.log("user", userInfo);
+console.log("header userInfo", userInfo);
 </script>
 
 <template>
   <header>
-    <RouterLink to="/"
+    <RouterLink :to="{ name: 'Home' }"
       ><img src="@/assets/img/logo.png" alt="홈 버튼"
     /></RouterLink>
 
     <nav>
       <ul v-if="userInfo == null">
-        <li><RouterLink to="/login">로그인</RouterLink></li>
+        <li><RouterLink :to="{ name: 'Login' }">로그인</RouterLink></li>
       </ul>
       <ul v-else>
-        <li>피드</li>
-        <li>마이플랜</li>
+        <li><RouterLink :to="{ name: 'GroupFeed' }">피드</RouterLink></li>
+        <li><RouterLink :to="{ name: 'Plan' }">마이플랜</RouterLink></li>
         <li>
-          <img class="profile" :src="imageUrl" alt="" />{{
-            userInfo.result.nickname
-          }}님
+          <RouterLink to="/my-page">
+            <img class="profile" :src="imageUrl" alt="" />{{
+              userInfo.nickname
+            }}님
+          </RouterLink>
         </li>
       </ul>
     </nav>

@@ -7,11 +7,6 @@ import PlanCreateView from "@/components/plan/PlanCreateView.vue";
 const router = useRouter();
 const plans = ref([]);
 
-// 랜덤 이미지 URL을 생성하는 함수
-function fetchRandomImage() {
-  return `https://picsum.photos/600/400?random=${Math.random()}`;
-}
-
 const getPlanList = async () => {
   const { data } = await planApi.get();
   console.log("response : ", data);

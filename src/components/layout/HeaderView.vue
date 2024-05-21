@@ -19,7 +19,7 @@ console.log("header userInfo", userInfo);
         <li><RouterLink :to="{ name: 'Login' }">로그인</RouterLink></li>
       </ul>
       <ul v-else>
-        <li>피드</li>
+        <li><RouterLink :to="{ name: 'GroupFeed' }">피드</RouterLink></li>
         <li><RouterLink :to="{ name: 'Plan' }">마이플랜</RouterLink></li>
         <li>
           <RouterLink to="/my-page">

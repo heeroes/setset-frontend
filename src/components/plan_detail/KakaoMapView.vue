@@ -1,72 +1,92 @@
 <script setup>
-import { KakaoMap, KakaoMapMarkerPolyline } from "vue3-kakao-maps";
 import { defineProps, ref } from "vue";
+import {
+  KakaoMap,
+  KakaoMapMarkerPolyline,
+  KakaoMapMarker,
+} from "vue3-kakao-maps";
 
-const image = {
-  imageSrc: "https://vue3-kakao-maps.netlify.app/images/redMarker.png",
-  imageWidth: 48,
-  imageHeight: 48,
-};
+import mapMarker0 from "@/assets/img/map/map_marker_0.png";
 
+// props 정의
 const props = defineProps(["planDetailArrays"]);
 
-console.log("props : ", props.planDetailArrays);
-const days = props.planDetailArrays.length;
-console.log(days);
-
+// 마커 리스트 초기화
 const markerList = ref([]);
 
-for (let i = 0; i < days; i++) {
+// 초기 좌표
+const lat = ref(33.452);
+const lng = ref(126.573);
+
+// 기본 마커 리스트
+const defaultMarkers = ref([]);
+
+// 일별 마커 정보 설정
+for (let i = 1; i < props.planDetailArrays.length; i++) {
   const markersForDay = [];
-  for (const detail of props.planDetailArrays[i]) {
-    const markerInfo = {
-      lat: detail.attraction.latitude,
-      lng: detail.attraction.longitude,
-      image: detail.attraction.image,
-      orderBottomMargin: "37px",
-      order: "출발", // 이 값은 임시로 설정된 것이므로 실제로 필요한 데이터로 대체해야 합니다.
-    };
-    markersForDay.push(markerInfo);
+  const image = {
+    imageSrc: `/src/assets/img/map/map_marker_${i}.png?t=1716269766674`,
+    imageWidth: 48,
+    imageHeight: 48,
+    imageOption: {},
+  };
+  if (props.planDetailArrays[i]) {
+    for (const detail of props.planDetailArrays[i]) {
+      lat.value = detail.attraction.latitude;
+      lng.value = detail.attraction.longitude;
+      console.log(typeof lat.value);
+      markersForDay.push({
+        lat: detail.attraction.latitude,
+        lng: detail.attraction.longitude,
+        image,
+        orderBottomMargin: "37px",
+        order: i,
+      });
+    }
   }
+
   markerList.value.push(markersForDay);
 }
 
-props.planDetailArrays.forEach((dayDetails, index) => {
-  dayDetails.forEach((detail) => {
-    const markerInfo = {
+// 기본 마커 정보 설정
+if (props.planDetailArrays[0]) {
+  const firstDay = props.planDetailArrays[0];
+
+  for (const detail of firstDay) {
+    defaultMarkers.value.push({
       lat: detail.attraction.latitude,
       lng: detail.attraction.longitude,
-      image,
-      orderBottomMargin: "37px",
-      order: index,
-    };
-    markerList.value.push(markerInfo);
-  });
-});
-
-console.log("markerList: ", markerList.value);
-
-// 마커 추가하기 버튼의 함수입니다
-const addMarker = () => {
-  markerList.value.push({
-    lat: 33.4509 + Math.random() * 0.003,
-    lng: 126.571 + Math.random() * 0.003,
-    image,
-    orderBottomMargin: "37px",
-  });
-};
-
-const deleteMarker = () => {
-  markerList.value.pop();
-};
+      attTitle: detail.attraction.title,
+    });
+  }
+}
 </script>
 
 <template>
-  <KakaoMap width="100%" height="100%" :lat="33.452" :lng="126.573"> </KakaoMap>
-  <div>
-    <button class="demo-button" @click="addMarker">마커 추가하기</button>
-    <button class="demo-button" @click="deleteMarker">마커 삭제하기</button>
-  </div>
+  <KakaoMap width="100%" height="100%" :lat="lat" :lng="lng">
+    <template v-for="(markers, index) in markerList" :key="index">
+      <KakaoMapMarkerPolyline
+        :endArrow="true"
+        :markerList="markers"
+        :showMarkerOrder="true"
+        strokeColor="#C74C5E"
+        :strokeOpacity="1"
+      />
+    </template>
+
+    <template v-for="marker in defaultMarkers" :key="marker.lat + marker.lng">
+      <KakaoMapMarker
+        :lat="marker.lat"
+        :lng="marker.lng"
+        :image="{
+          imageSrc: `${mapMarker0}`,
+          imageWidth: 48,
+          imageHeight: 48,
+          imageOption: {},
+        }"
+      />
+    </template>
+  </KakaoMap>
 </template>
 
 <style scoped></style>

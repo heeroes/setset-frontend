@@ -1,16 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import planApi from "@/api/plan";
 import PlanDetailShareView from "@/components/plan_detail/PlanDetailShareView.vue";
-import {
-  useRoute,
-  useRouter,
-  onBeforeRouteLeave,
-  RouterLink,
-} from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import KakaoMapView from "@/components/plan_detail/KakaoMapView.vue";
+import PlanDetailListView from "@/components/plan_detail/PlanDetailListView.vue";
 import { onMounted } from "vue";
 
 const authStore = useAuthStore();
@@ -28,22 +24,48 @@ console.log("receive : ", id.value);
 
 const plan = ref("");
 const planDetailArrays = ref("");
+const startDate = ref("");
+const endDate = ref("");
+const days = ref("");
+
 const getDetail = async () => {
   const url = `/${id.value}`;
   console.log(url);
   const { data } = await planApi.get(url);
   console.log("plan detail : ", data);
   plan.value = data.result;
+  console.log(plan.value);
 
-  planDetailArrays.value = plan.value.planDetailList.reduce((acc, detail) => {
-    // day가 존재하지 않는 경우에는 빈 배열을 만들어 줍니다.
-    acc[detail.day] = acc[detail.day] || [];
-    // 현재 요소를 해당 day 배열에 추가합니다.
-    acc[detail.day].push(detail);
-    return acc;
-  }, []);
-  console.log("plandetail list : ", planDetailArrays.value);
+  // calculateDayDifference();
 };
+
+watch(
+  plan,
+  () => {
+    console.log("시작 : ", plan.value.startDate);
+    console.log("끝 : ", plan.value.endDate);
+
+    startDate.value = new Date(plan.value.startDate);
+    endDate.value = new Date(plan.value.endDate);
+
+    const timeDifference = endDate.value - startDate.value;
+    const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+    console.log("여행 일수 호출 : ", Math.ceil(dayDifference));
+
+    days.value = Math.ceil(dayDifference); // 날짜 차이를 반올림해서 반환합니다
+
+    planDetailArrays.value = Array.from({ length: days.value + 1 }, () => []);
+
+    // Fill planDetailArrays based on detail.day
+    plan.value.planDetailList.forEach((detail) => {
+      if (planDetailArrays.value[detail.day]) {
+        planDetailArrays.value[detail.day].push(detail);
+      }
+    });
+    console.log("plandetail list : ", planDetailArrays.value.length);
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   getDetail();
@@ -55,31 +77,60 @@ const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
-const scrollToDay = (index) => {
-  const dayElement = document.getElementById(`day-${index}`);
-  if (dayElement) {
-    dayElement.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-};
 const isVisible = ref(false);
-const savePlan = () => {};
 const sharePlan = () => {
   isVisible.value = !isVisible.value;
 };
-const removePD = async (pdId) => {
-  await planApi.delete(`/detail/${pdId}`);
+const changePlan = () => {
   getDetail();
 };
-
 const close = () => {
+  isUpdateShow.value = false;
   isVisible.value = false;
+};
+
+const isUpdateShow = ref(false);
+const updateShow = () => {
+  isUpdateShow.value = !isUpdateShow.value;
+};
+
+const updatePlan = async () => {
+  planApi
+    .put(`/${id.value}`, plan.value)
+    .then((response) => {
+      console.log(response.data);
+      close();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 </script>
 <template>
   <div :class="['app-container', { 'sidebar-open': isSidebarOpen }]">
     <button class="hamburger" @click="toggleSidebar">☰</button>
-    <div class="title-container title-and-map">
+    <div>
       <h1>{{ plan.title }}</h1>
+      <h3>여행 지역 : {{ plan.region }}</h3>
+      <h3>여행 기간 : {{ plan.startDate }} - {{ plan.endDate }}</h3>
+      <button @click="updateShow">수정</button>
+      <div v-if="isUpdateShow" class="modal-overlay">
+        <div class="modal">
+          <form @submit.prevent="updatePlan">
+            여행명 : <input type="text" v-model="plan.title" /> <br />
+            여행 지역:
+            <input type="text" v-model="plan.region" />
+            <br />
+            시작 날짜 :
+            <input type="date" v-model="plan.startDate" :max="plan.endDate" />
+            <br />
+            끝 날짜 :
+            <input type="date" v-model="plan.endDate" :min="plan.startDate" />
+            <input type="submit" value="수정하기" />
+            <input type="button" @click="close" value="닫기" />
+          </form>
+        </div>
+      </div>
     </div>
     <div class="sidebar" v-if="isSidebarOpen">
       <!-- 사이드바 내용 -->
@@ -89,7 +140,7 @@ const close = () => {
     <div class="main-content">
       <div class="map">
         <KakaoMapView
-          v-if="planDetailArrays"
+          :key="planDetailArrays"
           :planDetailArrays="planDetailArrays"
         />
       </div>
@@ -101,42 +152,13 @@ const close = () => {
             :planId="id"
             @close="close"
           />
-          <button @click="savePlan">저장</button>
         </div>
-        <div class="tabs">
-          <button
-            class="tab"
-            v-for="index in planDetailArrays.length"
-            :key="index"
-            @click="scrollToDay(index)"
-          >
-            {{ index === 1 ? "Default" : "Day " + (index - 1) }}
-          </button>
-        </div>
-        <div
-          id="day-{{ index }}"
-          class="content-area"
-          v-for="(details, index) in planDetailArrays"
-          :key="index"
-        >
-          <h2>{{ index === 0 ? "Default" : "Day " + index }}</h2>
-          <div class="content-grid">
-            <div v-for="(pd, idx) in details" :key="idx" class="content-card">
-              <div class="image-container">
-                <img :src="pd.attraction.image" />
-                <button
-                  class="close-button"
-                  v-if="!isGuest"
-                  @click="removePD(pd.id)"
-                >
-                  X
-                </button>
-              </div>
-              <h3>{{ pd.attraction.title }}</h3>
-              <p>{{ pd.addr }}</p>
-            </div>
-          </div>
-        </div>
+        <PlanDetailListView
+          :key="planDetailArrays"
+          :planDetailArrays="planDetailArrays"
+          :planId="id"
+          @changePlan="changePlan"
+        />
       </div>
     </div>
   </div>
@@ -147,31 +169,34 @@ const close = () => {
   transition: margin-left 0.3s;
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  max-width: 100%;
+  z-index: 9999;
+}
+
 .title-and-map {
   display: flex;
 }
 
 .title-container {
   margin-bottom: 20px;
-}
-.image-container {
-  position: relative;
-}
-
-.image-container img {
-  max-width: 100%;
-}
-
-.close-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  padding: 5px;
-  border-radius: 50%;
-  cursor: pointer;
 }
 
 .hamburger {
@@ -215,6 +240,7 @@ const close = () => {
 
 .map {
   width: 40vw;
+  height: 80vh;
   background-color: #ccc;
   display: flex;
   justify-content: center;
@@ -239,28 +265,5 @@ const close = () => {
   padding: 10px 20px;
   cursor: pointer;
   border: none;
-}
-
-.day-plan {
-  margin-bottom: 20px;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.content-card {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.content-card:hover {
-  transform: translateY(-5px);
 }
 </style>

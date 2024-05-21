@@ -142,6 +142,7 @@ const updatePlan = async () => {
         <KakaoMapView
           :key="planDetailArrays"
           :planDetailArrays="planDetailArrays"
+          :planId="plan.id"
         />
       </div>
       <div class="content-area">

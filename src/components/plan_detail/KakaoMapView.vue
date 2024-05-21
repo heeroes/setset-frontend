@@ -7,9 +7,10 @@ import {
 } from "vue3-kakao-maps";
 
 import mapMarker0 from "@/assets/img/map/map_marker_0.png";
+import safeApi from "@/api/safe";
 
 // props 정의
-const props = defineProps(["planDetailArrays"]);
+const props = defineProps(["planDetailArrays","planId"]);
 
 // 마커 리스트 초기화
 const markerList = ref([]);
@@ -20,6 +21,8 @@ const lng = ref(126.573);
 
 // 기본 마커 리스트
 const defaultMarkers = ref([]);
+// 안전 정보 마커 리스트
+const safeMapMarkers = ref([]);
 
 // 일별 마커 정보 설정
 for (let i = 1; i < props.planDetailArrays.length; i++) {
@@ -60,10 +63,37 @@ if (props.planDetailArrays[0]) {
     });
   }
 }
+
+//안전정보 마커 설정
+const getSafeMap = async (agencyType) => {
+  try{
+    const { response } = await safeApi.get("/map/" + props.planId,{
+      agencyType : agencyType
+    });
+    const safeLocationList = response.data.result;
+    for(const safe of safeLocationList){
+      safeMapMarkers.value.push({
+      lat: safe.latitude,
+      lng: safe.longitude,
+      name: safe.name,
+      address:safe.address,
+      tel: safe.tel
+      })
+    }
+  }catch(error){
+    console.log("안전정보 마커 에러", error)
+  }
+
+}
 </script>
 
 <template>
-  <KakaoMap width="100%" height="100%" :lat="lat" :lng="lng">
+  <div class="agencyType">
+    <button @click="getSafeMap(`police`)">근처 경찰서</button>
+    <button>근처 응급센터</button>
+    <button>근처 안전지킴이집</button>
+  </div>
+  <KakaoMap width="100%" height="100%" :lat="lat" :lng="lng" :level="8">
     <template v-for="(markers, index) in markerList" :key="index">
       <KakaoMapMarkerPolyline
         :endArrow="true"
@@ -80,6 +110,18 @@ if (props.planDetailArrays[0]) {
         :lng="marker.lng"
         :image="{
           imageSrc: `${mapMarker0}`,
+          imageWidth: 48,
+          imageHeight: 48,
+          imageOption: {},
+        }"
+      />
+    </template>
+    <template v-for="marker in safeMap" :key="marker.lat + marker.lng">
+      <KakaoMapMarker
+        :lat="marker.lat"
+        :lng="marker.lng"
+        :image="{
+          imageSrc: `https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png`,
           imageWidth: 48,
           imageHeight: 48,
           imageOption: {},

@@ -130,8 +130,8 @@ const addComment = async (postIndex) => {
             >
               &lt;
             </button>
-            {{}}
             <img
+              v-if="article.images[article.currentImageIndex]"
               :src="`${VITE_IMAGE_BASE_URL}${
                 article.images[article.currentImageIndex]
               }`"

@@ -10,7 +10,7 @@ const searchKeyword = async () => {
   const url = `http://localhost/api/v1/attraction/search?keyword=${keyword.value}`;
   const { data } = await axios.get(url);
   console.log("response : ", data.result.attractions);
-  // router.push(({name:"SearchAttraction", params: {data.result.attractions}));
+  router.push({ path: "/search", query: { keyword: keyword.value } });
 };
 </script>
 

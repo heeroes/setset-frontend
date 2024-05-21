@@ -22,9 +22,11 @@ console.log("header userInfo", userInfo);
         <li>피드</li>
         <li><RouterLink :to="{ name: 'Plan' }">마이플랜</RouterLink></li>
         <li>
-          <img class="profile" :src="imageUrl" alt="" />{{
-            userInfo.result.nickname
-          }}님
+          <RouterLink to="/my-page">
+            <img class="profile" :src="imageUrl" alt="" />{{
+              userInfo.nickname
+            }}님
+          </RouterLink>
         </li>
       </ul>
     </nav>

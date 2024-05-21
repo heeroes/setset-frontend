@@ -15,6 +15,7 @@ function fetchRandomImage() {
 const getPlanList = async () => {
   const { data } = await planApi.get();
   console.log("response : ", data);
+
   plans.value = data.result.plans;
   console.log("plans : ", plans.value);
 };
@@ -65,6 +66,7 @@ getPlanList();
             X
           </button>
         </div>
+
         <div>{{ plan.title }}</div>
         <div>
           <span>{{ plan.region }}</span>

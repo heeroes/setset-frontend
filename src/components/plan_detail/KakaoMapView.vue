@@ -2,12 +2,6 @@
 import { KakaoMap, KakaoMapMarkerPolyline } from "vue3-kakao-maps";
 import { defineProps, ref } from "vue";
 
-const image = {
-  imageSrc: "https://vue3-kakao-maps.netlify.app/images/redMarker.png",
-  imageWidth: 48,
-  imageHeight: 48,
-};
-
 const props = defineProps(["planDetailArrays"]);
 
 console.log("props : ", props.planDetailArrays);
@@ -18,31 +12,36 @@ const markerList = ref([]);
 
 for (let i = 0; i < days; i++) {
   const markersForDay = [];
+  const image = {
+    imageSrc: `@/assets/img/map/map_marker_${i + 1}.png`,
+    imageWidth: 48,
+    imageHeight: 48,
+  };
   for (const detail of props.planDetailArrays[i]) {
     const markerInfo = {
       lat: detail.attraction.latitude,
       lng: detail.attraction.longitude,
-      image: detail.attraction.image,
+      image,
       orderBottomMargin: "37px",
-      order: "출발", // 이 값은 임시로 설정된 것이므로 실제로 필요한 데이터로 대체해야 합니다.
+      order: i,
     };
     markersForDay.push(markerInfo);
   }
   markerList.value.push(markersForDay);
 }
 
-props.planDetailArrays.forEach((dayDetails, index) => {
-  dayDetails.forEach((detail) => {
-    const markerInfo = {
-      lat: detail.attraction.latitude,
-      lng: detail.attraction.longitude,
-      image,
-      orderBottomMargin: "37px",
-      order: index,
-    };
-    markerList.value.push(markerInfo);
-  });
-});
+// props.planDetailArrays.forEach((dayDetails, index) => {
+//   dayDetails.forEach((detail) => {
+//     const markerInfo = {
+//       lat: detail.attraction.latitude,
+//       lng: detail.attraction.longitude,
+//       image,
+//       orderBottomMargin: "37px",
+//       order: index,
+//     };
+//     markerList.value.push(markerInfo);
+//   });
+// });
 
 console.log("markerList: ", markerList.value);
 
@@ -62,7 +61,17 @@ const deleteMarker = () => {
 </script>
 
 <template>
-  <KakaoMap width="100%" height="100%" :lat="33.452" :lng="126.573"> </KakaoMap>
+  <KakaoMap width="100%" height="100%" :lat="33.452" :lng="126.573">
+    <template v-for="markers in markerList">
+      <KakaoMapMarkerPolyline
+        :markerList="markers"
+        :showMarkerOrder="true"
+        strokeColor="#C74C5E"
+        :strokeOpacity="1"
+        strokeStyle="shortdot"
+      />
+    </template>
+  </KakaoMap>
   <div>
     <button class="demo-button" @click="addMarker">마커 추가하기</button>
     <button class="demo-button" @click="deleteMarker">마커 삭제하기</button>

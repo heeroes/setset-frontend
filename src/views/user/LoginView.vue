@@ -1,10 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/auth";
-
-const authStore = useAuthStore();
-const router = useRouter();
 
 const NAVER_URL =
   "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=QNfPn8BRWlnEF4unf3Q9&state=hLiDdL2uhPtsftcU&redirect_uri=http://localhost:80/api/v1/user/login/naver";
@@ -21,14 +16,6 @@ const login = async (url) => {
     alert("실패");
   }
 };
-
-const logout = () => {
-  if (!confirm("로그아웃 하시겠습니까?")) return;
-  authStore.logout();
-  user.value = null;
-  router.push("/"); //홈으로 이동
-};
-const imageUrl = ref(null);
 </script>
 
 <template>
@@ -37,10 +24,6 @@ const imageUrl = ref(null);
     <div v-if="user == null">
       <button @click="login(GOOGLE_URL)">구글로그인</button>
       <button @click="login(NAVER_URL)">네이버로그인</button>
-    </div>
-    <div v-else>
-      <img :src="`${imageUrl}`" alt="" />
-      <li @click="logout">로그아웃</li>
     </div>
   </main>
 </template>

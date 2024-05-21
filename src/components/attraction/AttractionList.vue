@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { defineProps, defineEmits } from 'vue';
+import planApi from "@/api/plan";
 
 const props = defineProps({
   keyword: String,
@@ -61,16 +62,52 @@ const pageNumbers = computed(() => {
   }
   return pages;
 });
+
+const plans = ref([]);
+const getPlanList = async () =>{
+  const response = await planApi.get('');
+  plans.value = response.data.result.plans;
+  console.log("plans", response.data.result.plans)
+
+}
+
+const addToPlan = async (planId, attractionId) => {
+      try {
+        await planApi.post(`/detail`, {
+          attractionId: attractionId,
+          planId : planId
+        });
+        alert(`계획에 여행지 추가가 완료되었습니다!`);
+      } catch (error) {
+        console.error('Error adding attraction to plan:', error);
+        alert('Failed to add attraction to plan');
+      }
+    };
+const dropdownIndex = ref(null);
+const toggleDropdown = (index) => {
+  dropdownIndex.value = dropdownIndex.value === index ? null : index;
+};
+getPlanList()
+
 </script>
 
 <template>
   <div class="attraction-section">
     <div v-if="attractions.length" class="attraction-list">
       <div
-        v-for="attraction in attractions"
+        v-for="(attraction,index) in attractions"
         :key="attraction.id"
         class="attraction-item"
       >
+       <!-- 드롭다운 버튼 추가 -->
+       <div class="dropdown" @click="toggleDropdown(index)">
+              +
+              <div v-if="dropdownIndex === index" class="dropdown-content">
+                <button v-for="plan in plans" :key="plan.id" :value="plan.id" @click="addToPlan(plan.id, attraction.id)">
+          {{ plan.title }}
+                </button>              
+              </div>
+            </div>
         <h3>{{ attraction.title }}</h3>
         <img :src="attraction.image" :alt="attraction.title" />
         <p>{{ attraction.addr }}</p>
@@ -145,5 +182,32 @@ const pageNumbers = computed(() => {
 .pagination button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+.dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.dropdown-content button {
+  display: block;
+  width: 100px;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content button:hover {
+  background-color: #f1f1f1;
 }
 </style>

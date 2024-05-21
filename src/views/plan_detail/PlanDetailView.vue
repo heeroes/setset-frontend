@@ -89,7 +89,7 @@ const close = () => {
     <div class="main-content">
       <div class="map">
         <KakaoMapView
-          v-if="planDetailArrays"
+          :key="planDetailArrays"
           :planDetailArrays="planDetailArrays"
         />
       </div>
@@ -110,7 +110,7 @@ const close = () => {
             :key="index"
             @click="scrollToDay(index)"
           >
-            {{ index === 1 ? "Default" : "Day " + (index - 1) }}
+            {{ index === 1 ? "🛫여기 언제❓" : "Day " + (index - 1) }}
           </button>
         </div>
         <div
@@ -119,7 +119,7 @@ const close = () => {
           v-for="(details, index) in planDetailArrays"
           :key="index"
         >
-          <h2>{{ index === 0 ? "Default" : "Day " + index }}</h2>
+          <h2>{{ index === 0 ? "🛫여기 언제❓" : "Day " + index }}</h2>
           <div class="content-grid">
             <div v-for="(pd, idx) in details" :key="idx" class="content-card">
               <div class="image-container">
@@ -215,6 +215,7 @@ const close = () => {
 
 .map {
   width: 40vw;
+  height: 80vh;
   background-color: #ccc;
   display: flex;
   justify-content: center;

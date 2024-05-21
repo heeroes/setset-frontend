@@ -1,81 +1,105 @@
 <script setup>
-import { KakaoMap, KakaoMapMarkerPolyline } from "vue3-kakao-maps";
 import { defineProps, ref } from "vue";
+import {
+  KakaoMap,
+  KakaoMapMarkerPolyline,
+  KakaoMapMarker,
+} from "vue3-kakao-maps";
 
+import mapMarker0 from "@/assets/img/map/map_marker_0.png";
+
+// props 정의
 const props = defineProps(["planDetailArrays"]);
 
-console.log("props : ", props.planDetailArrays);
-const days = props.planDetailArrays.length;
-console.log(days);
-
+// 마커 리스트 초기화
 const markerList = ref([]);
 
-for (let i = 0; i < days; i++) {
+// 초기 좌표
+const lat = ref(33.452);
+const lng = ref(126.573);
+
+// 기본 마커 리스트
+const defaultMarkers = ref([]);
+
+// 일별 마커 정보 설정
+for (let i = 1; i < props.planDetailArrays.length; i++) {
   const markersForDay = [];
   const image = {
-    imageSrc: `@/assets/img/map/map_marker_${i + 1}.png`,
+    imageSrc: `/src/assets/img/map/map_marker_${i}.png?t=1716269766674`,
     imageWidth: 48,
     imageHeight: 48,
+    imageOption: {},
   };
-  for (const detail of props.planDetailArrays[i]) {
-    const markerInfo = {
-      lat: detail.attraction.latitude,
-      lng: detail.attraction.longitude,
-      image,
-      orderBottomMargin: "37px",
-      order: i,
-    };
-    markersForDay.push(markerInfo);
+  if (props.planDetailArrays[i]) {
+    for (const detail of props.planDetailArrays[i]) {
+      lat.value = detail.attraction.latitude;
+      lng.value = detail.attraction.longitude;
+      console.log(typeof lat.value);
+      markersForDay.push({
+        lat: detail.attraction.latitude,
+        lng: detail.attraction.longitude,
+        image,
+        orderBottomMargin: "37px",
+        order: i,
+      });
+    }
   }
+
   markerList.value.push(markersForDay);
 }
 
-// props.planDetailArrays.forEach((dayDetails, index) => {
-//   dayDetails.forEach((detail) => {
-//     const markerInfo = {
-//       lat: detail.attraction.latitude,
-//       lng: detail.attraction.longitude,
-//       image,
-//       orderBottomMargin: "37px",
-//       order: index,
-//     };
-//     markerList.value.push(markerInfo);
-//   });
-// });
+// 기본 마커 정보 설정
+if (props.planDetailArrays[0]) {
+  const firstDay = props.planDetailArrays[0];
+  for (const detail of firstDay) {
+    defaultMarkers.value.push({
+      lat: detail.attraction.latitude,
+      lng: detail.attraction.longitude,
+      attTitle: detail.attraction.title,
+    });
+  }
+}
 
-console.log("markerList: ", markerList.value);
+const visibleRef = ref(false);
 
-// 마커 추가하기 버튼의 함수입니다
-const addMarker = () => {
-  markerList.value.push({
-    lat: 33.4509 + Math.random() * 0.003,
-    lng: 126.571 + Math.random() * 0.003,
-    image,
-    orderBottomMargin: "37px",
-  });
+const mouseOverKakaoMapMarker = () => {
+  visibleRef.value = true;
 };
 
-const deleteMarker = () => {
-  markerList.value.pop();
+const mouseOutKakaoMapMarker = () => {
+  visibleRef.value = false;
 };
 </script>
 
 <template>
-  <KakaoMap width="100%" height="100%" :lat="33.452" :lng="126.573">
-    <template v-for="markers in markerList">
+  <KakaoMap width="100%" height="100%" :lat="lat" :lng="lng">
+    <template v-for="(markers, index) in markerList" :key="index">
       <KakaoMapMarkerPolyline
+        :endArrow="true"
         :markerList="markers"
         :showMarkerOrder="true"
         strokeColor="#C74C5E"
         :strokeOpacity="1"
-        strokeStyle="shortdot"
+      />
+    </template>
+
+    <template v-for="marker in defaultMarkers" :key="marker.lat + marker.lng">
+      <KakaoMapMarker
+        :lat="marker.lat"
+        :lng="marker.lng"
+        :clickable="true"
+        :infoWindow="{ content: `${marker.attTitle}`, visible: visibleRef }"
+        @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker"
+        @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker"
+        :image="{
+          imageSrc: `${mapMarker0}`,
+          imageWidth: 48,
+          imageHeight: 48,
+          imageOption: {},
+        }"
       />
     </template>
   </KakaoMap>
-  <div>
-    <button class="demo-button" @click="addMarker">마커 추가하기</button>
-    <button class="demo-button" @click="deleteMarker">마커 삭제하기</button>
-  </div>
 </template>
 
 <style scoped></style>

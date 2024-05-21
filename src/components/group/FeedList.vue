@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import groupApi from "@/api/group";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router"; // Vue Router import
 
 const { VITE_IMAGE_BASE_URL } = import.meta.env;
 const authStore = useAuthStore();
@@ -11,6 +12,7 @@ const { userInfo } = storeToRefs(authStore);
 // 선택된 그룹의 게시글 목록 상태 변수
 const selectedGroupPosts = ref([]);
 const groupId = ref(0);
+const group = ref(null);
 // 부모 컴포넌트로부터 선택된 그룹을 전달받는 props
 const props = defineProps({
   selectedGroup: Object,
@@ -23,6 +25,7 @@ watch(
     if (newVal) {
       // 선택된 그룹의 게시글을 가져오는 비동기 로직을 수행하고 selectedGroupPosts 업데이트
       getGroupFeed(newVal);
+      group.value = newVal;
       groupId.value = newVal.id;
     } else {
       selectedGroupPosts.value = [];
@@ -97,11 +100,39 @@ const addComment = async (postIndex) => {
     post.newComment = "";
   }
 };
+const editArticle = (id) => {
+  console.log(`Edit article with ID: ${id}`);
+  // TODO: 게시글 수정 api
+};
+
+const deleteArticle = async (id) => {
+  try {
+    console.log(`Delete article with ID: ${id}`);
+    const { data } = await groupApi.delete(
+      "/" + groupId.value + "/article/" + id
+    );
+    alert("게시글 삭제가 완료되었습니다.");
+    getGroupFeed(group.value);
+  } catch (error) {
+    console.error("게시글 삭제 error:", error);
+    if (error.response.data && error.response.data.result) {
+      alert(`게시글 삭제 실패: ${error.response.data.result}`);
+    }
+  }
+};
+//게시글 드롭 다운
+const dropdownIndex = ref(null);
+const toggleDropdown = (index) => {
+  dropdownIndex.value = dropdownIndex.value === index ? null : index;
+};
 </script>
 
 <template>
   <div>
-    <h2>게시글 목록 - {{ selectedGroup ? selectedGroup.name : "전체" }}</h2>
+    <h2>{{ selectedGroup ? selectedGroup.name : "" }}</h2>
+    <RouterLink :to="{ name: 'NewArticle', params: { id: groupId } }">
+      <button>new</button>
+    </RouterLink>
     <ul v-if="selectedGroup">
       <div class="feed">
         <div
@@ -110,16 +141,26 @@ const addComment = async (postIndex) => {
           class="post"
         >
           <div class="post-header">
-            <img
-              :src="`${VITE_IMAGE_BASE_URL}${article.userImageKey}`"
-              alt="프로필 이미지"
-              class="profile-image"
-            />
-            <div class="user-info">
-              <span class="nickname">{{ article.nickname }}</span>
-              <span class="created-at">{{
-                formatDate(article.createdAt)
-              }}</span>
+            <div class="user-info-wrapper">
+              <img
+                :src="`${VITE_IMAGE_BASE_URL}${article.userImageKey}`"
+                alt="프로필 이미지"
+                class="profile-image"
+              />
+              <div class="user-info">
+                <span class="nickname">{{ article.nickname }}</span>
+                <span class="created-at">{{
+                  formatDate(article.createdAt)
+                }}</span>
+              </div>
+            </div>
+            <!-- 드롭다운 버튼 추가 -->
+            <div class="dropdown" @click="toggleDropdown(index)">
+              ⋮
+              <div v-if="dropdownIndex === index" class="dropdown-content">
+                <button @click="editArticle(article.id)">수정</button>
+                <button @click="deleteArticle(article.id)">삭제</button>
+              </div>
             </div>
           </div>
           <div class="post-images">
@@ -151,7 +192,7 @@ const addComment = async (postIndex) => {
             <p>{{ article.content }}</p>
           </div>
           <div class="comments-section">
-            <button @click="toggleComments(index)">댓글 {{ 1 }}개</button>
+            <button @click="toggleComments(index)">댓글 더보기</button>
             <div v-if="article.showComments" class="comments">
               <div
                 v-for="comment in article.comments"
@@ -208,8 +249,13 @@ const addComment = async (postIndex) => {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  justify-content: space-between; /* 드롭다운 버튼을 오른쪽 끝으로 이동 */
 }
 
+.user-info-wrapper {
+  display: flex;
+  align-items: center;
+}
 .profile-image {
   width: 40px;
   height: 40px;
@@ -230,7 +276,33 @@ const addComment = async (postIndex) => {
   color: #888;
   font-size: 0.8em;
 }
+.dropdown {
+  position: relative;
+  cursor: pointer;
+}
 
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.dropdown-content button {
+  display: block;
+  width: 60px;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content button:hover {
+  background-color: #f1f1f1;
+}
 .post-images {
   position: relative;
   display: flex;

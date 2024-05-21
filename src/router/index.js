@@ -8,6 +8,7 @@ import PlanListView from "@/components/plan/PlanListView.vue";
 import GroupFeedView from "@/views/group/GroupFeedView.vue";
 import { useAuthStore } from "@/stores/auth";
 import MyPageView from "@/views/user/MyPageView.vue";
+import NewArticle from "@/components/group/NewArticle.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,9 +19,9 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path:"/my-page",
-      name:"MyPage",
-      component:MyPageView
+      path: "/my-page",
+      name: "MyPage",
+      component: MyPageView,
     },
     {
       path: "/login",
@@ -57,10 +58,15 @@ const router = createRouter({
       component: PlanDetailView,
     },
     {
-      path:"/feed",
-      name:"GroupFeed",
-      component:GroupFeedView
-    }
+      path: "/feed",
+      name: "GroupFeed",
+      component: GroupFeedView,
+    },
+    {
+      path: "/new-article/:id",
+      name: "NewArticle",
+      component: NewArticle,
+    },
   ],
 });
 

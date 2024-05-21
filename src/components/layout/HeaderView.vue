@@ -14,6 +14,7 @@ console.log("header userInfo", userInfo);
     <RouterLink :to="{ name: 'Home' }"
       ><img src="@/assets/img/logo.png" alt="홈 버튼"
     /></RouterLink>
+
     <nav>
       <ul v-if="userInfo == null">
         <li><RouterLink :to="{ name: 'Login' }">로그인</RouterLink></li>

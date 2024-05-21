@@ -24,8 +24,9 @@ const defaultMarkers = ref([]);
 // 일별 마커 정보 설정
 for (let i = 1; i < props.planDetailArrays.length; i++) {
   const markersForDay = [];
+  const idx = i % 15;
   const image = {
-    imageSrc: `/src/assets/img/map/map_marker_${i}.png?t=1716269766674`,
+    imageSrc: `/src/assets/img/map/map_marker_${idx}.png?t=1716269766674`,
     imageWidth: 48,
     imageHeight: 48,
     imageOption: {},

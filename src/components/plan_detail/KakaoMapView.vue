@@ -51,6 +51,7 @@ for (let i = 1; i < props.planDetailArrays.length; i++) {
 // 기본 마커 정보 설정
 if (props.planDetailArrays[0]) {
   const firstDay = props.planDetailArrays[0];
+
   for (const detail of firstDay) {
     defaultMarkers.value.push({
       lat: detail.attraction.latitude,
@@ -59,16 +60,6 @@ if (props.planDetailArrays[0]) {
     });
   }
 }
-
-const visibleRef = ref(false);
-
-const mouseOverKakaoMapMarker = () => {
-  visibleRef.value = true;
-};
-
-const mouseOutKakaoMapMarker = () => {
-  visibleRef.value = false;
-};
 </script>
 
 <template>
@@ -87,10 +78,6 @@ const mouseOutKakaoMapMarker = () => {
       <KakaoMapMarker
         :lat="marker.lat"
         :lng="marker.lng"
-        :clickable="true"
-        :infoWindow="{ content: `${marker.attTitle}`, visible: visibleRef }"
-        @mouseOverKakaoMapMarker="mouseOverKakaoMapMarker"
-        @mouseOutKakaoMapMarker="mouseOutKakaoMapMarker"
         :image="{
           imageSrc: `${mapMarker0}`,
           imageWidth: 48,

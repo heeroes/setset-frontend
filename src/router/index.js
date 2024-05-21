@@ -44,13 +44,6 @@ const router = createRouter({
       path: "/plan",
       name: "Plan",
       component: PlanView,
-      children: [
-        {
-          path: "list",
-          name: "PlanList",
-          component: PlanListView,
-        },
-      ],
     },
     {
       path: "/plan/:id",

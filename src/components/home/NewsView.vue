@@ -7,8 +7,10 @@ const news = ref();
 const getNewData = async () => {
   const url = `http://localhost/api/v1/safe/info/news`;
   const { data } = await axios.get(url);
-  console.log("response : ", data);
+  console.log("response : ", data.result);
+  news.value = data.result.news;
 };
+getNewData();
 </script>
 
 <template>

@@ -12,11 +12,11 @@ import PlanListView from "@/components/plan/PlanListView.vue";
       <UserInfoView class="left-panel" />
       <div class="right-panel">
         <div class="travel-plans">
-          <h2>🎈나의 여행 계획</h2>
-          <PlanListView />
+          <h2 class="text-3xl" >🎈나의 여행 계획</h2>
+            <PlanListView />
         </div>
         <div class="groups">
-          <h2>그룹</h2>
+          <h2 class="text-3xl" >👨‍👩‍👧‍👦 그룹</h2>
           <MyGroupView />
         </div>
       </div>
@@ -60,11 +60,14 @@ import PlanListView from "@/components/plan/PlanListView.vue";
   flex: 3;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
 }
+
 
 .travel-plans,
 .groups {
   margin-top: 20px;
+  margin-left: 10px;
 }
 
 .travel-plans h2,
@@ -75,6 +78,8 @@ import PlanListView from "@/components/plan/PlanListView.vue";
 .plans {
   display: flex;
   justify-content: space-around;
+  padding: 10px;
+  flex-shrink: 0; /* 카드의 크기를 고정합니다. */
 }
 
 .plan-card {

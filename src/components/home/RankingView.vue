@@ -1,45 +1,50 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const attractions = ref([]);
 
 const attractionRanking = async () => {
   const url = `http://localhost/api/v1/attraction/rank`;
   const { data } = await axios.get(url);
   console.log("response : ", data);
-  attractions.value = data.result;
+  attractions.value = data.result.map((attraction) => ({
+    ...attraction,
+    isActive: false,
+  }));
 };
 attractionRanking();
 
-const isActive = ref(false);
-const overlayText = ref("조회하기");
-
+const overlayText = ref("알아볼까?");
 const addToCart = (att) => {
-  att.value.isActive = true;
-  att.value.overlayText = "검색";
-  setTimeout(() => {
-    att.value.isActive = false;
-    att.value.overlayText = "조회하기";
-  }, 1000); // Reset after 1 second
+  overlayText.value = "검색";
+  searchDetail(att.id);
+};
+
+const searchDetail = (id) => {
+  router.push({ name: "AttractionDetail", params: { id } });
 };
 </script>
 
 <template>
   <h1>인기 여행지 순위</h1>
   <div class="section">
-    <div v-for="att in attractions" class="card" @click="addToCart(att)">
-      <div class="image">
-        <img :src="att.image" :alt="att.title" />
-      </div>
-      <span class="title">{{ att.title }}</span>
-      <span class="cont">
-        {{ att.addr }}
-        <br />
-        👀 : {{ att.popularity }}
-      </span>
-      <div class="overlay" :class="{ active: att.isActive }">
-        {{ att.overlayText }}
+    <div v-for="att in attractions" :key="att.id" class="card">
+      <div @click="addToCart(att)">
+        <div class="image">
+          <img :src="att.image" :alt="att.title" />
+        </div>
+        <span class="title">{{ att.title }}</span>
+        <span class="cont">
+          {{ att.addr }}
+          <br />
+          👀 : {{ att.popularity }}
+        </span>
+        <div class="overlay" :class="{ active: att.isActive }">
+          {{ overlayText }}
+        </div>
       </div>
     </div>
   </div>
@@ -150,7 +155,7 @@ img {
   left: 0;
   bottom: -60px;
   background: #f6e58d;
-  color: #fff;
+  color: #888;
   height: 2.5em;
   width: 90%;
   transition: all 80ms;

@@ -1,18 +1,12 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
+import SearchResult from "@/components/attraction/SearchResult.vue";
 
 const keyword = ref("");
-const router = useRouter();
-const searchKeyword = () => {
-  router.push({ path: "/search", query: { keyword: keyword.value } });
-};
 </script>
 
 <template>
-  <div class="img">
-    <h2>setset에서 안전한 여행지를 찾아보세요.</h2>
+  <div>
     <form class="form" @submit.prevent="searchKeyword">
       <button type="button">
         <svg
@@ -62,6 +56,7 @@ const searchKeyword = () => {
       </button>
     </form>
   </div>
+  <SearchResult v-if="keyword" :keyword="keyword" />
 </template>
 
 <style scoped>

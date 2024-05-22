@@ -4,6 +4,7 @@ import groupApi from "@/api/group";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { RouterLink } from "vue-router"; // Vue Router import
+import PlanSummary from "@/components/plan/PlanSummary.vue";
 
 const { VITE_IMAGE_BASE_URL } = import.meta.env;
 const authStore = useAuthStore();
@@ -189,7 +190,8 @@ const toggleDropdown = (index) => {
           </div>
 
           <div class="post-content">
-            <p>{{ article.content }}</p>
+            <PlanSummary :content="article.content" />
+            <!-- <p>{{  }}</p> -->
           </div>
           <div class="comments-section">
             <button @click="toggleComments(index)">댓글 더보기</button>

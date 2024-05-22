@@ -156,7 +156,7 @@ getPlanList();
 }
 
 .plan-card {
-  width: 300px;
+  width: 400px;
   height: 400px; /* 카드의 높이를 강제로 지정합니다. */
   padding-bottom: 20px;
   margin-right: 20px;

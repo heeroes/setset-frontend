@@ -5,71 +5,66 @@ import { useRouter } from "vue-router";
 
 const keyword = ref("");
 const router = useRouter();
-const searchKeyword = async () => {
-  console.log(keyword.value);
-  const url = `http://localhost/api/v1/attraction/search?keyword=${keyword.value}`;
-  const { data } = await axios.get(url);
-  console.log("response : ", data.result.attractions);
+const searchKeyword = () => {
   router.push({ path: "/search", query: { keyword: keyword.value } });
 };
-const clearInput = () =>{
+const clearInput = () => {
   keyword.value = "";
-}
+};
 </script>
 
 <template>
-    <form class="form" @submit.prevent="searchKeyword">
-      <button type="button">
-        <svg
-          width="17"
-          height="16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          role="img"
-          aria-labelledby="search"
-        >
-          <path
-            d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
-            stroke="currentColor"
-            stroke-width="1.333"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          ></path>
-        </svg>
-      </button>
-      <input
-        class="input"
-        placeholder="어디로 떠날 예정인가요?"
-        required
-        type="text"
-        v-model="keyword"
-      />
-      <button
-        class="reset"
-        type="reset"
-        @click="clearInput"
-        :class="{ visible: keyword }"
+  <form class="form" @submit.prevent="searchKeyword">
+    <button type="button">
+      <svg
+        width="17"
+        height="16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-labelledby="search"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
+        <path
+          d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
           stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
-      </button>
-    </form>
+          stroke-width="1.333"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </button>
+    <input
+      class="input"
+      placeholder="어디로 떠날 예정인가요?"
+      required
+      type="text"
+      v-model="keyword"
+    />
+    <button
+      class="reset"
+      type="reset"
+      @click="clearInput"
+      :class="{ visible: keyword }"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        ></path>
+      </svg>
+    </button>
+  </form>
 </template>
 
 <style scoped>
-
 /* From uiverse.io by @satyamchaudharydev */
 /* removing default style of button */
 

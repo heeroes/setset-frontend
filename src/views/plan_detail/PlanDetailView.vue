@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import KakaoMapView from "@/components/plan_detail/KakaoMapView.vue";
 import PlanDetailListView from "@/components/plan_detail/PlanDetailListView.vue";
+import SidebarSearch from "@/components/plan_detail/SidebarSearch.vue";
 import { onMounted } from "vue";
 
 const authStore = useAuthStore();
@@ -35,8 +36,6 @@ const getDetail = async () => {
   console.log("plan detail : ", data);
   plan.value = data.result;
   console.log(plan.value);
-
-  // calculateDayDifference();
 };
 
 watch(
@@ -99,6 +98,7 @@ const updatePlan = async () => {
     .put(`/${id.value}`, plan.value)
     .then((response) => {
       console.log(response.data);
+      getDetail();
       close();
     })
     .catch((error) => {
@@ -133,8 +133,7 @@ const updatePlan = async () => {
       </div>
     </div>
     <div class="sidebar" v-if="isSidebarOpen">
-      <!-- 사이드바 내용 -->
-      <p>Sidebar Content</p>
+      <SidebarSearch />
     </div>
 
     <div class="main-content">
@@ -207,9 +206,7 @@ const updatePlan = async () => {
 }
 
 .sidebar {
-  width: 200px;
-  background-color: #333;
-  color: white;
+  width: 300px;
   height: 100%;
   position: fixed;
   top: 0;

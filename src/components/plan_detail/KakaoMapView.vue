@@ -7,8 +7,6 @@ import {
 } from "vue3-kakao-maps";
 
 import mapMarker0 from "@/assets/img/map/map_marker_0.png";
-import policeMarker from "@/assets/img/map/police_marker.png";
-
 import safeApi from "@/api/safe";
 
 // props 정의
@@ -79,11 +77,10 @@ const getSafeMap = async (agencyType) => {
     if (agencyType == "hospital") {
       isHospital.value = !isHospital.value;
       if (!isHospital) {
-        hospitalInfo = ref([]);
-      } else if (hospitalInfo.value == []) {
+        return;
+      } else {
         preHospitalInfo();
       }
-      return;
     }
 
     if (agencyType == "police") {

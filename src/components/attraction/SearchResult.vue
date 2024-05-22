@@ -1,8 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import attractionApi from "@/api/attraction";
-import AttractionList from '@/components/attraction/AttractionList.vue';
+import AttractionList from "@/components/attraction/AttractionList.vue";
 import planApi from "@/api/plan";
 
 const route = useRoute();
@@ -29,7 +29,7 @@ const hasMore = ref({});
 const pageSize = 10;
 const currentPage = ref({});
 const totalPages = ref({});
-const activeType = ref(parseInt(route.query.type) || 'all');
+const activeType = ref(parseInt(route.query.type) || "all");
 const isCalled = ref(false);
 
 // 각 타입별로 초기화
@@ -45,7 +45,6 @@ const getAttractionListByKeyword = async (keyword) => {
     const { data } = await attractionApi.get("/search?keyword=" + keyword);
     console.log("response : ", data.result.attractions[12]);
     attractions.value = data.result.attractions;
-    
   } catch (error) {
     console.log("error", error);
     // if (error.response.data && error.response.data.result) {
@@ -54,23 +53,22 @@ const getAttractionListByKeyword = async (keyword) => {
   }
 };
 const fetchAttractions = async (keyword, type, page = 1) => {
-  console.log("fetch type", type)
+  console.log("fetch type", type);
   try {
     const response = await attractionApi.get("/search?keyword=" + keyword, {
       params: {
         contentTypeId: type,
         pageSize,
-        page:page,
+        page: page,
       },
     });
-    console.log("fetch attractions", response.data.result.attractions[type])
+    console.log("fetch attractions", response.data.result.attractions[type]);
     const data = response.data.result.attractions[type] || [];
     attractions.value[type] = data;
     hasMore.value[type] = data.length === pageSize;
-    console.log("fetch total page", response.data.result.totalPages)
+    console.log("fetch total page", response.data.result.totalPages);
     totalPages.value[type] = response.data.result.totalPages;
-    isCalled.value = true
-
+    isCalled.value = true;
   } catch (error) {
     console.error("Error fetching attractions:", error);
   }
@@ -84,12 +82,12 @@ const loadMore = (type) => {
 const setActiveType = (type) => {
   isCalled.value = false;
   activeType.value = type;
-  if (type !== 'all') {
+  if (type !== "all") {
     console.log("setActiveType : ", type);
     fetchAttractions(keyword.value, type);
   }
   router.push({ query: { keyword: keyword.value, type: type } });
-  console.log("setActiveType isCalled", isCalled.value)
+  console.log("setActiveType isCalled", isCalled.value);
 };
 
 const changePage = (type, page) => {
@@ -102,39 +100,45 @@ const goToType = (type) => {
   setActiveType(type);
 };
 
-watch(() => route.query.keyword, (newKeyword) => {
-  keyword.value = newKeyword;
-  attractionTypes.forEach((type) => {
-    fetchAttractions(newKeyword, type.value);
-  });
-});
+watch(
+  () => route.query.keyword,
+  (newKeyword) => {
+    keyword.value = newKeyword;
+    attractionTypes.forEach((type) => {
+      fetchAttractions(newKeyword, type.value);
+    });
+  }
+);
 getAttractionListByKeyword(keyword.value);
 
 const plans = ref([]);
-const getPlanList = async () =>{
-  const response = await planApi.get('');
+const getPlanList = async () => {
+  const response = await planApi.get("");
   plans.value = response.data.result.plans;
-  console.log("plans", response.data.result.plans)
-
-}
+  console.log("plans", response.data.result.plans);
+};
 
 const addToPlan = async (planId, attractionId) => {
-      try {
-        await planApi.post(`/detail`, {
-          attractionId: attractionId,
-          planId : planId
-        });
-        alert(`계획에 여행지 추가가 완료되었습니다!`);
-      } catch (error) {
-        console.error('Error adding attraction to plan:', error);
-        alert('Failed to add attraction to plan');
-      }
-    };
+  try {
+    await planApi.post(`/detail`, {
+      attractionId: attractionId,
+      planId: planId,
+    });
+    alert(`계획에 여행지 추가가 완료되었습니다!`);
+  } catch (error) {
+    console.error("Error adding attraction to plan:", error);
+    alert("Failed to add attraction to plan");
+  }
+};
 const dropdownIndex = ref(null);
 const toggleDropdown = (index) => {
   dropdownIndex.value = dropdownIndex.value === index ? null : index;
 };
-getPlanList()
+
+const searchDetail = (id) => {
+  router.push({ name: "AttractionDetail", params: { id } });
+};
+getPlanList();
 </script>
 
 <template>
@@ -159,22 +163,29 @@ getPlanList()
         <h2>{{ type.name }}</h2>
         <div v-if="attractions[type.value] != []" class="attraction-list">
           <div
-            v-for="attraction in attractions[type.value]"
+            v-for="(attraction, index) in attractions[type.value]"
             :key="attraction.id"
             class="attraction-item"
           >
-          <!-- 드롭다운 버튼 추가 -->
-       <div class="dropdown" @click="toggleDropdown(index)">
+            <!-- 드롭다운 버튼 추가 -->
+            <div class="dropdown" @click="toggleDropdown(index)">
               +
               <div v-if="dropdownIndex === index" class="dropdown-content">
-                <button v-for="plan in plans" :key="plan.id" :value="plan.id" @click="addToPlan(plan.id, attraction.id)">
-          {{ plan.title }}
-                </button>              
+                <button
+                  v-for="plan in plans"
+                  :key="plan.id"
+                  :value="plan.id"
+                  @click="addToPlan(plan.id, attraction.id)"
+                >
+                  {{ plan.title }}
+                </button>
               </div>
             </div>
-            <h3>{{ attraction.title }}</h3>
-            <img :src="attraction.image" :alt="attraction.title" />
-            <p>{{ attraction.addr }}</p>
+            <div @click="searchDetail(attraction.id)">
+              <h3>{{ attraction.title }}</h3>
+              <img :src="attraction.image" :alt="attraction.title" />
+              <p>{{ attraction.addr }}</p>
+            </div>
           </div>
           <button @click="goToType(type.value)">+ 더보기</button>
         </div>

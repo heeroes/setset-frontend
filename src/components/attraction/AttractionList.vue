@@ -1,7 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { defineProps, defineEmits } from 'vue';
+import { ref, computed } from "vue";
+import { defineProps, defineEmits } from "vue";
+import { useRouter } from "vue-router";
 import planApi from "@/api/plan";
+
+const router = useRouter();
 
 const props = defineProps({
   keyword: String,
@@ -16,15 +19,17 @@ const props = defineProps({
 });
 const totalPages = props.totalPages;
 const itemsPerPage = 5;
-const totalPageGroups = computed(() => Math.ceil(props.totalPages / itemsPerPage));
+const totalPageGroups = computed(() =>
+  Math.ceil(props.totalPages / itemsPerPage)
+);
 const currentGroup = ref(Math.ceil(props.currentPage / itemsPerPage));
 
-console.log("attractionList totalPages,", totalPages)
-console.log("type : ", props.type)
-const emits = defineEmits(['load-more', 'change-page']);
+console.log("attractionList totalPages,", totalPages);
+console.log("type : ", props.type);
+const emits = defineEmits(["load-more", "change-page"]);
 
 const changePage = (page) => {
-  emits('change-page', props.type, page);
+  emits("change-page", props.type, page);
 };
 const goToNextGroup = () => {
   if (currentGroup.value < totalPageGroups.value) {
@@ -52,7 +57,6 @@ const goToFirstGroup = () => {
   changePage(1);
 };
 
-
 const pageNumbers = computed(() => {
   const startPage = (currentGroup.value - 1) * itemsPerPage + 1;
   const endPage = Math.min(startPage + itemsPerPage - 1, props.totalPages);
@@ -64,53 +68,62 @@ const pageNumbers = computed(() => {
 });
 
 const plans = ref([]);
-const getPlanList = async () =>{
-  const response = await planApi.get('');
+const getPlanList = async () => {
+  const response = await planApi.get("");
   plans.value = response.data.result.plans;
-  console.log("plans", response.data.result.plans)
-
-}
+  console.log("plans", response.data.result.plans);
+};
 
 const addToPlan = async (planId, attractionId) => {
-      try {
-        await planApi.post(`/detail`, {
-          attractionId: attractionId,
-          planId : planId
-        });
-        alert(`계획에 여행지 추가가 완료되었습니다!`);
-      } catch (error) {
-        console.error('Error adding attraction to plan:', error);
-        alert('Failed to add attraction to plan');
-      }
-    };
+  try {
+    await planApi.post(`/detail`, {
+      attractionId: attractionId,
+      planId: planId,
+    });
+    alert(`계획에 여행지 추가가 완료되었습니다!`);
+  } catch (error) {
+    console.error("Error adding attraction to plan:", error);
+    alert("Failed to add attraction to plan");
+  }
+};
 const dropdownIndex = ref(null);
 const toggleDropdown = (index) => {
   dropdownIndex.value = dropdownIndex.value === index ? null : index;
 };
-getPlanList()
 
+const searchDetail = (id) => {
+  router.push({ name: "AttractionDetail", params: { id } });
+};
+getPlanList();
 </script>
 
 <template>
   <div class="attraction-section">
     <div v-if="attractions.length" class="attraction-list">
       <div
-        v-for="(attraction,index) in attractions"
+        v-for="(attraction, index) in attractions"
         :key="attraction.id"
         class="attraction-item"
       >
-       <!-- 드롭다운 버튼 추가 -->
-       <div class="dropdown" @click="toggleDropdown(index)">
-              +
-              <div v-if="dropdownIndex === index" class="dropdown-content">
-                <button v-for="plan in plans" :key="plan.id" :value="plan.id" @click="addToPlan(plan.id, attraction.id)">
-          {{ plan.title }}
-                </button>              
-              </div>
-            </div>
-        <h3>{{ attraction.title }}</h3>
-        <img :src="attraction.image" :alt="attraction.title" />
-        <p>{{ attraction.addr }}</p>
+        <!-- 드롭다운 버튼 추가 -->
+        <div class="dropdown" @click="toggleDropdown(index)">
+          +
+          <div v-if="dropdownIndex === index" class="dropdown-content">
+            <button
+              v-for="plan in plans"
+              :key="plan.id"
+              :value="plan.id"
+              @click="addToPlan(plan.id, attraction.id)"
+            >
+              {{ plan.title }}
+            </button>
+          </div>
+        </div>
+        <div @click="searchDetail(attraction.id)">
+          <h3>{{ attraction.title }}</h3>
+          <img :src="attraction.image" :alt="attraction.title" />
+          <p>{{ attraction.addr }}</p>
+        </div>
       </div>
     </div>
     <div v-else>
@@ -118,19 +131,30 @@ getPlanList()
     </div>
     <div class="pagination">
       <button @click="goToFirstGroup" :disabled="currentGroup === 1">««</button>
-      <button @click="goToPreviousGroup" :disabled="currentGroup === 1">«</button>
+      <button @click="goToPreviousGroup" :disabled="currentGroup === 1">
+        «
+      </button>
 
       <button
-      v-for="page in pageNumbers"
-      :key="page"
-      :class="{ active: page === props.currentPage }"
-      @click="changePage(page)"
-    >
-      {{ page }}
-    </button>
-    <button @click="goToNextGroup" :disabled="currentGroup === totalPageGroups">»</button>
-    <button @click="goToLastGroup" :disabled="currentGroup === totalPageGroups">»»</button>
-
+        v-for="page in pageNumbers"
+        :key="page"
+        :class="{ active: page === props.currentPage }"
+        @click="changePage(page)"
+      >
+        {{ page }}
+      </button>
+      <button
+        @click="goToNextGroup"
+        :disabled="currentGroup === totalPageGroups"
+      >
+        »
+      </button>
+      <button
+        @click="goToLastGroup"
+        :disabled="currentGroup === totalPageGroups"
+      >
+        »»
+      </button>
     </div>
   </div>
 </template>

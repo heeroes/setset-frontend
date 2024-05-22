@@ -30,8 +30,7 @@ const summaryPlan = async () => {
   console.log("group : ", selectedGroup.value);
   planApi
     .get(`/share/summary?id=${props.planId}&groupId=${selectedGroup.value}`)
-    .then(alert("공유 완료"))
-    .catch(alert("공유 실패"));
+    .then(alert("공유 완료"));
   close();
 };
 

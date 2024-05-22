@@ -4,6 +4,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { useKakao } from "vue3-kakao-maps/@utils";
+import "@/assets/css/output.css"; // Tailwind CSS 스타일 파일 가져오기
 
 const { VITE_KAKAO_SERVICE_KEY } = import.meta.env;
 

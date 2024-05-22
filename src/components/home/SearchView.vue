@@ -66,8 +66,8 @@ const searchKeyword = () => {
 
 <style scoped>
 .img {
-  height: 300px;
-  background-image: url("@/assets/img/main_image.jpg");
+  height: 400px;
+  background-image: url("@/assets/img/jeju-island-6929634_1920.jpg");
   background-position: center;
   background-size: cover;
 }

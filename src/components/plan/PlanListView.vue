@@ -55,7 +55,7 @@ getPlanList();
           <img
             v-else
             src="https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
-            alt=""
+            alt="no image"
           />
           <button class="close-button" @click.stop="removePlan(plan.id)">
             X

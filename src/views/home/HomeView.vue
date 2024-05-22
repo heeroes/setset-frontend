@@ -12,9 +12,16 @@ import SearchView from "@/components/home/SearchView.vue";
     <SearchView />
     <RankingView />
     <SafeGuideView />
-    <DisasterInfoView />
-    <NewsView />
+    <div class="safe_info">
+      <DisasterInfoView />
+      <NewsView />
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.safe_info {
+  display: flex;
+  justify-content: space-evenly;
+}
+</style>

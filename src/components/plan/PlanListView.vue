@@ -38,8 +38,8 @@ getPlanList();
 </script>
 
 <template>
-  <div>
-    <div v-for="plan in plans" :key="plan.id" class="card">
+  <div class="plans">
+    <div v-for="plan in plans" :key="plan.id" class="plan-card">
       <div @click="detailPlan(plan)">
         <div class="image-container">
           <img
@@ -76,19 +76,30 @@ getPlanList();
 </template>
 
 <style scoped>
-.card {
-  position: relative;
-  width: 11.875em;
+.plans {
+  display: flex;
+  justify-content: space-around;
+}
+
+.plan-card {
+  /* position: relative;
+  width: 200px;
   height: 16.5em;
-  box-shadow: 0px 1px 13px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 120ms;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  padding: 0.5em;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px; */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .planImg {
   width: 100%;

@@ -116,16 +116,15 @@ const leaveGroup = async (groupId) => {
 </script>
 
 <template>
-  <h1>나의 그룹 리스트</h1>
-  <div class="section">
-    <div v-for="group in groupList" class="card">
+  <div class="group-list">
+    <div v-for="group in groupList" class="group">
       <span class="title">{{ group.name }}</span>
       <button @click="openAddUserModal(group.id)">+</button>
       <button @click="leaveGroup(group.id)">-</button>
     </div>
-  </div>
-  <div class="addGroup">
-    <button @click="openCreateGroupModal">+ Add new Group</button>
+    <div class="addGroup">
+      <button @click="openCreateGroupModal">+ Add new Group</button>
+    </div>
   </div>
 
   <!--그룹 추가 모달-->
@@ -182,6 +181,18 @@ const leaveGroup = async (groupId) => {
 </template>
 
 <style scoped>
+.group-list {
+  display: flex;
+  flex-direction: column;
+}
+.group,
+.addGroups {
+  padding: 10px;
+  background-color: white;
+  margin: 5px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 /* 모달 스타일 */
 .modal {
   display: block;

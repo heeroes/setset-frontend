@@ -619,6 +619,10 @@ video {
   margin-bottom: 2.5rem;
 }
 
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -758,6 +762,11 @@ video {
   line-height: 1.5rem;
 }
 
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .font-extrabold {
   font-weight: 800;
 }
@@ -813,6 +822,21 @@ video {
 
 .ease-in {
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@font-face {
+  font-family: "WavvePADO-Regular";
+
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/WavvePADO-Regular.woff2")
+    format("woff2");
+
+  font-weight: normal;
+
+  font-style: normal;
+}
+
+body {
+  font-family: "WavvePADO-Regular", wavve;
 }
 
 .hover\:bg-gray-200:hover {

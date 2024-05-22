@@ -55,6 +55,8 @@ if (props.planDetailArrays[0]) {
   const firstDay = props.planDetailArrays[0];
 
   for (const detail of firstDay) {
+    lat.value = detail.attraction.latitude;
+    lng.value = detail.attraction.longitude;
     defaultMarkers.value.push({
       lat: detail.attraction.latitude,
       lng: detail.attraction.longitude,
@@ -76,7 +78,7 @@ const getSafeMap = async (agencyType) => {
     console.log("props.planId", props.planId);
     if (agencyType == "hospital") {
       isHospital.value = !isHospital.value;
-      if (!isHospital) {
+      if (!isHospital.value) {
         return;
       } else {
         preHospitalInfo();
@@ -85,7 +87,7 @@ const getSafeMap = async (agencyType) => {
 
     if (agencyType == "police") {
       isPoliceInfo.value = !isPoliceInfo.value;
-      if (!isPoliceInfo) {
+      if (!isPoliceInfo.value) {
         return;
       } else {
         fetchSafeMap(agencyType);
@@ -94,7 +96,7 @@ const getSafeMap = async (agencyType) => {
 
     if (agencyType == "guardHouse") {
       isGuardHouse.value = !isGuardHouse.value;
-      if (!isGuardHouse) {
+      if (!isGuardHouse.value) {
         return;
       } else {
         fetchSafeMap(agencyType);
@@ -176,8 +178,16 @@ preHospitalInfo();
     </template>
 
     <template v-for="marker in defaultMarkers" :key="marker.lat + marker.lng">
-      <KakaoMapMarker :lat="marker.lat" :lng="marker.lng" :image="{ imageSrc:
-      `${mapMarker0}`, imageWidth: 48, imageHeight: 48, imageOption: {}, }" " />
+      <KakaoMapMarker
+        :lat="marker.lat"
+        :lng="marker.lng"
+        :image="{
+          imageSrc: `${mapMarker0}`,
+          imageWidth: 48,
+          imageHeight: 48,
+          imageOption: {},
+        }"
+      />
     </template>
 
     <template v-for="marker in hospitalInfo" :key="marker.lat + marker.lng">

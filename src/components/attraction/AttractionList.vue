@@ -16,7 +16,10 @@ const props = defineProps({
   hasMore: Boolean,
   currentPage: Number,
   totalPages: Number,
+  maxLength : Number,
 });
+const maxLength = props.maxLength;
+console.log("pros.maxLength",maxLength)
 const totalPages = props.totalPages;
 const itemsPerPage = 5;
 const totalPageGroups = computed(() =>
@@ -95,7 +98,7 @@ const searchDetail = (id) => {
   router.push({ name: "AttractionDetail", params: { id } });
 };
 
-const truncateMessage = (message, maxLength) => {
+const truncateMessage = (message) => {
   // 메시지를 줄일 최대 길이
   console.log(message);
   if (message) {
@@ -131,7 +134,7 @@ getPlanList();
             <p style="color: #666; margin-bottom: 5px">
               {{ attraction.addr }}
             </p>
-            <p>{{ truncateMessage(attraction.overview, 65) }}</p>
+            <p>{{ truncateMessage(attraction.overview) }}</p>
           </div>
         </div>
         <!-- 드롭다운 버튼 추가 -->
@@ -187,12 +190,7 @@ getPlanList();
 </template>
 
 <style scoped>
-.dropdown {
-  position: absolute; /* 드롭다운 버튼에 대해 position: absolute; 설정 */
-  top: -130px; /* 원하는 위치 조정 */
-  left: 650px;
-  cursor: pointer;
-}
+
 .attraction-section {
   margin-bottom: 40px;
 }
@@ -230,7 +228,12 @@ getPlanList();
   max-height: 120px;
   border-radius: 4px;
 }
-
+.dropdown {
+  position: absolute; /* 드롭다운 버튼에 대해 position: absolute; 설정 */
+  top: 10px; /* Adjust top position as needed */
+  right: 10px; /* Adjust right position as needed */
+  cursor: pointer;
+}
 .dropdown-content {
   position: absolute;
   top: 50%;

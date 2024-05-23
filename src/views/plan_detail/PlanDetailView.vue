@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import planApi from "@/api/plan";
-import PlanDetailShareView from "@/components/plan_detail/PlanDetailShareView.vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
@@ -83,10 +82,7 @@ const sharePlan = () => {
 const changePlan = () => {
   getDetail();
 };
-const close = () => {
-  isUpdateShow.value = false;
-  isVisible.value = false;
-};
+
 
 const isUpdateShow = ref(false);
 const updateShow = () => {
@@ -105,60 +101,78 @@ const updatePlan = async () => {
       console.error(error);
     });
 };
+const close = () => {
+  isUpdateShow.value = false;
+};
 </script>
 <template>
-  <div :class="['app-container', { 'sidebar-open': isSidebarOpen }]">
-    <button class="hamburger" @click="toggleSidebar">☰</button>
-    <div>
-      <h1>{{ plan.title }}</h1>
-      <h3>여행 지역 : {{ plan.region }}</h3>
-      <h3>여행 기간 : {{ plan.startDate }} - {{ plan.endDate }}</h3>
-      <button @click="updateShow">수정</button>
-      <div v-if="isUpdateShow" class="modal-overlay">
-        <div class="modal">
-          <form @submit.prevent="updatePlan">
-            여행명 : <input type="text" v-model="plan.title" /> <br />
-            여행 지역:
-            <input type="text" v-model="plan.region" />
-            <br />
-            시작 날짜 :
-            <input type="date" v-model="plan.startDate" :max="plan.endDate" />
-            <br />
-            끝 날짜 :
-            <input type="date" v-model="plan.endDate" :min="plan.startDate" />
-            <input type="submit" value="수정하기" />
-            <input type="button" @click="close" value="닫기" />
-          </form>
-        </div>
-      </div>
-    </div>
+  <div
+    :class="['app-container', { 'sidebar-open': isSidebarOpen }]"
+    style="margin-right: 5%"
+  >
+    <button
+      class="hamburger"
+      @click="toggleSidebar"
+      :style="{ zIndex: isSidebarOpen ? '1001' : '0' }"
+      
+    >
+      {{ isSidebarOpen ? "X" : "☰" }}
+    </button>
     <div class="sidebar" v-if="isSidebarOpen">
       <SidebarSearch />
     </div>
-
-    <div class="main-content">
-      <div class="map">
-        <KakaoMapView
-          :key="planDetailArrays"
-          :planDetailArrays="planDetailArrays"
-          :planId="plan.id"
-        />
+    <div class="content">
+      <div class="plan_info" style="margin-bottom: 20px">
+        <div class="title-container">
+          <h1 class="title" style="font-size: 30px">{{ plan.title }}</h1>
+          <h3 class="location-tag">#{{ plan.region }}</h3>
+        </div>
+        <h3 style="color: gray">{{ plan.startDate }} - {{ plan.endDate }}</h3>
+        <button
+          class="updatePlan-btn"
+          @click="updateShow"
+          style="
+            border-radius: 99px;
+            border: 2px solid #333; /* 경계선 추가 및 색상 지정 */
+          "
+        >
+          수정
+        </button>
+        <div v-if="isUpdateShow" class="modal-overlay">
+          <div class="modal">
+            <button @click="close" style="margin-bottom: 5px;">X</button>
+            <div class="heading">Edit Plan</div>
+            <form @submit.prevent="updatePlan">
+              <input class="update-info" type="text" v-model="plan.title" />
+              <input class="update-info" type="text" v-model="plan.region" />
+              <div class="update-info">
+              <input type="date" v-model="plan.startDate" :max="plan.endDate" />
+               ~ 
+              <input type="date" v-model="plan.endDate" :min="plan.startDate" />
+            </div>
+              <input class="update-btn" type="submit" value="수정하기" />
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="content-area">
-        <div class="tabs" v-show="!isGuest">
-          <button @click="sharePlan">공유</button>
-          <PlanDetailShareView
-            :isVisible="isVisible"
-            :planId="id"
-            @close="close"
+
+      <div class="main-content">
+        <div class="map">
+          <KakaoMapView
+            :key="planDetailArrays"
+            :planDetailArrays="planDetailArrays"
+            :planId="plan.id"
           />
         </div>
-        <PlanDetailListView
-          :key="planDetailArrays"
-          :planDetailArrays="planDetailArrays"
-          :planId="id"
-          @changePlan="changePlan"
-        />
+        <div class="content-area">
+          <PlanDetailListView
+            :key="planDetailArrays"
+            :planDetailArrays="planDetailArrays"
+            :planId="id"
+            :isGuest="isGuest"
+            @changePlan="changePlan"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -166,63 +180,64 @@ const updatePlan = async () => {
 <style scoped>
 .app-container {
   display: flex;
-  transition: margin-left 0.3s;
+  position: relative;
+  /* transition: margin-left 0.3s; */
+  margin-top: 10px;
 }
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  width: 300px;
-  max-width: 100%;
-  z-index: 9999;
-}
-
-.title-and-map {
-  display: flex;
-}
-
-.title-container {
-  margin-bottom: 20px;
-}
-
 .hamburger {
-  font-size: 24px;
+  font-size: 40px;
   cursor: pointer;
-  margin-right: 10px;
+  position: fixed;
+  left: 10px;
+  z-index: 1001;
+  transition: top 0.3s; /* top 속성에 대한 전환 효과 추가 */
 }
-
 .sidebar {
-  width: 300px;
+  width: 30%;
   height: 100%;
   position: fixed;
   top: 0;
-  left: -200px; /* 초기 위치를 화면 밖으로 */
+  left: -30%; /* 초기 위치를 화면 밖으로 */
   transition: transform 0.3s;
   z-index: 999;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-open {
-  transform: translateX(200px); /* 사이드바를 보이도록 이동 */
+  transform: translateX(30%);
+  /* 사이드바를 보이도록 이동 */
 }
 
+/* 사이드바 제외 부분 */
+.content {
+  margin-left: 40px;
+  width: calc(100% - 40px);
+}
+.plan_info {
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center; /* 타이틀과 location-tag를 수직 정렬 */
+  margin-bottom: 5px;
+}
+.title {
+  margin-right: 20px;
+}
+.location-tag {
+  background-color: #abd373;
+  border-radius: 99px;
+  color: white;
+  width: 5%;
+  text-align: center;
+  padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
+}
 .main-content {
   display: flex;
   flex: 1;
-  margin-top: 50px; /* 헤더의 높이에 맞춰 조정 */
+  margin-top: 10px; /* 헤더의 높이에 맞춰 조정 */
   overflow: hidden;
 }
 
@@ -263,5 +278,91 @@ const updatePlan = async () => {
   padding: 10px 20px;
   cursor: pointer;
   border: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+/* 수정 모달 */
+.updatePlan-btn {
+  border-radius: 99px;
+  border: 2px solid #333; /* 경계선 추가 및 색상 지정 */
+  padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
+  font-size: 12px;
+}
+.modal {
+  /* background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  max-width: 100%;
+  z-index: 9999; */
+  max-width: 400px;
+  background: #F8F9FD;
+  background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+  border-radius: 40px;
+  padding: 25px 35px;
+  border: 5px solid rgb(255, 255, 255);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+  margin: 20px;
+
+}
+.heading {
+  text-align: center;
+  font-weight: 900;
+  font-size: 30px;
+  color: rgb(16, 137, 211);
+}
+
+.form {
+  margin-top: 20px;
+}
+
+.update-info{
+  width: 100%;
+  background: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 20px;
+  margin-top: 15px;
+  box-shadow: #cff0ff 0px 10px 10px -5px;
+  border-inline: 2px solid transparent;
+  display: flex;
+  align-items: center;
+}
+.update-btn{
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+  color: white;
+  padding-block: 15px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.form .update-btn {
+  transform: scale(1.03);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px;
+}
+
+.form .update-btn {
+  transform: scale(0.95);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px;
+}
+.title-and-map {
+  display: flex;
 }
 </style>

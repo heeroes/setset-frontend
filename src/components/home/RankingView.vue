@@ -28,8 +28,9 @@ const searchDetail = (id) => {
 };
 </script>
 
-<template>
-  <h1>인기 여행지 순위</h1>
+<template >
+  <div class="container" style="margin-top: 20px; height: 350px;">
+  <h1 style="font-size:larger;">👍 인기 여행지 순위</h1>
   <div class="section">
     <div v-for="att in attractions" :key="att.id" class="card">
       <div @click="addToCart(att)">
@@ -48,15 +49,17 @@ const searchDetail = (id) => {
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
 .section {
   display: flex;
-  flex-wrap: nowrap;
   gap: 1em;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-x: auto;
+  overflow-y: hidden; /* 세로 스크롤 감추기 */
+  width: 100%;
 }
 .section::-webkit-scrollbar {
   height: 8px; /* Custom scrollbar height */
@@ -71,8 +74,8 @@ const searchDetail = (id) => {
   background: #888; /* Scrollbar color on hover */
 }
 .card {
-  position: relative;
-  width: 11.875em;
+  /* position: relative; */
+  width: 800px;
   height: 16.5em;
   box-shadow: 0px 1px 13px rgba(0, 0, 0, 0.1);
   cursor: pointer;

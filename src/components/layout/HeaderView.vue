@@ -24,7 +24,7 @@ console.log("header userInfo", userInfo);
         <li><RouterLink :to="{ name: 'Plan' }">My Plan</RouterLink></li>
         <li>
           <RouterLink to="/my-page">
-            {{userInfo.nickname}}님
+            {{userInfo.nickname}}님 안녕하세요!
           </RouterLink>
         </li>
         <li>
@@ -46,12 +46,12 @@ console.log("header userInfo", userInfo);
 }
 
 header {
-  border: 1px solid black;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 110px;
   padding: 0 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 아래쪽에 그림자 효과 추가 */
 }
 
 .logo {

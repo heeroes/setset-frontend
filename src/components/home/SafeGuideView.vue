@@ -80,7 +80,7 @@ const prevPage = () => {
   <div class="container">
     <div class="header">
       <div class="nav">
-        <span class="active">안전여행가이드</span>
+        <span class="active">📚 안전여행가이드</span>
       </div>
     </div>
     <div class="content">
@@ -96,8 +96,8 @@ const prevPage = () => {
       <div class="cards">
         <div v-for="card in visibleCards" :key="card.id" class="card">
           <img :src="card.image" :alt="card.title" />
-          <p>{{ card.title }}</p>
-          <p>{{ card.description }}</p>
+          <p style="font-size: large">{{ card.title }}</p>
+          <p style="font-size: 14px; color: #999999">{{ card.description }}</p>
         </div>
       </div>
     </div>
@@ -108,6 +108,8 @@ const prevPage = () => {
 .container {
   width: 100%;
   padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 .header {
@@ -128,6 +130,7 @@ const prevPage = () => {
 
 .nav .active {
   border-bottom: 2px solid #1abc9c;
+  font-size: x-large;
 }
 
 .content {
@@ -143,6 +146,7 @@ const prevPage = () => {
 
 .pagination {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 10px;
   margin-top: 10px;
@@ -150,22 +154,27 @@ const prevPage = () => {
 
 .cards {
   display: flex;
+  justify-content: center; /* 카드들을 가로축 가운데 정렬 */
   gap: 20px;
   overflow-x: scroll;
   width: 100%;
 }
 
 .card {
-  min-width: 200px;
+  width: 600px;
   border: 1px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
 .card img {
-  width: 100%;
+  width: 400px;
   height: auto;
+  margin-top: 10px;
 }
 
 .card p {

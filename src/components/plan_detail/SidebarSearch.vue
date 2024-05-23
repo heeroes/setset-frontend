@@ -104,6 +104,10 @@ watch(
     });
   }
 );
+
+const search = () => {
+  getAttractionListByKeyword(keyword.value);
+};
 getAttractionListByKeyword(keyword.value);
 
 const plans = ref([]);
@@ -146,13 +150,11 @@ const truncateMessage = (message, maxLength) => {
 };
 
 getPlanList();
-
 </script>
-
 
 <template>
   <div>
-    <form class="form" @submit.prevent >
+    <form class="form" @submit.prevent="search">
       <button type="button">
         <svg
           width="17"
@@ -203,102 +205,102 @@ getPlanList();
   </div>
 
   <template v-if="keyword">
-  <div>
-    <div class="tabs">
-      <button
-        v-for="type in [{ value: 'all', name: '전체' }, ...attractionTypes]"
-        :key="type.value"
-        :class="{ active: activeType === type.value }"
-        @click="setActiveType(type.value)"
-      >
-        {{ type.name }}
-      </button>
-    </div>
-    <div class="search-keyword">
-      <span style="font-size: 26px; color: #e74c3c">{{ keyword }}</span>
-      <span style="font-size: 20px">를 검색한 결과입니다.</span>
-    </div>
-
-    <div v-if="activeType === 'all'">
-      <div
-        v-for="type in attractionTypes"
-        :key="type.value"
-        class="attraction-section"
-      >
-        <h2
-          style="
-            font-size: 25px;
-            margin-bottom: 10px;
-            margin-top: 10px;
-            padding-left: 10px;
-          "
+    <div>
+      <div class="tabs">
+        <button
+          v-for="type in [{ value: 'all', name: '전체' }, ...attractionTypes]"
+          :key="type.value"
+          :class="{ active: activeType === type.value }"
+          @click="setActiveType(type.value)"
         >
-          🚩 {{ type.name }}
-        </h2>
-        <div v-if="attractions[type.value] != []" class="attraction-list">
-          <div
-            v-for="(attraction, index) in attractions[type.value]"
-            :key="attraction.id"
-            class="attraction-item"
+          {{ type.name }}
+        </button>
+      </div>
+      <div class="search-keyword">
+        <span style="font-size: 26px; color: #e74c3c">{{ keyword }}</span>
+        <span style="font-size: 20px">를 검색한 결과입니다.</span>
+      </div>
+
+      <div v-if="activeType === 'all'">
+        <div
+          v-for="type in attractionTypes"
+          :key="type.value"
+          class="attraction-section"
+        >
+          <h2
+            style="
+              font-size: 25px;
+              margin-bottom: 10px;
+              margin-top: 10px;
+              padding-left: 10px;
+            "
           >
-            <div @click="searchDetail(attraction.id)" class="attraction-info">
-              <div class="attraction-image">
-                <img
-                  :src="attraction.image"
-                  :alt="attraction.title"
-                  v-if="attraction.image"
-                />
-                <div v-else class="no-image"></div>
+            🚩 {{ type.name }}
+          </h2>
+          <div v-if="attractions[type.value] != []" class="attraction-list">
+            <div
+              v-for="(attraction, index) in attractions[type.value]"
+              :key="attraction.id"
+              class="attraction-item"
+            >
+              <div @click="searchDetail(attraction.id)" class="attraction-info">
+                <div class="attraction-image">
+                  <img
+                    :src="attraction.image"
+                    :alt="attraction.title"
+                    v-if="attraction.image"
+                  />
+                  <div v-else class="no-image"></div>
+                </div>
+                <div class="attraction-details">
+                  <h3 style="font-size: 20px">{{ attraction.title }}</h3>
+                  <p style="color: #666; margin-bottom: 5px">
+                    {{ attraction.addr }}
+                  </p>
+                  <p>{{ truncateMessage(attraction.overview, 30) }}</p>
+                </div>
               </div>
-              <div class="attraction-details">
-                <h3 style="font-size: 20px">{{ attraction.title }}</h3>
-                <p style="color: #666; margin-bottom: 5px">
-                  {{ attraction.addr }}
-                </p>
-                <p>{{ truncateMessage(attraction.overview, 30) }}</p>
-              </div>
-            </div>
-            <!-- 드롭다운 버튼 추가 -->
-            <div class="dropdown" @click="toggleDropdown(attraction.id)">
-              <button class="icon-btn add-btn">
-                <div class="add-icon"></div>
-                <div class="btn-txt">Add to Plan ▶</div>
-              </button>
-              <div
-                v-if="dropdownStates[attraction.id]"
-                class="dropdown-content"
-              >
-                <button
-                  v-for="plan in plans"
-                  :key="plan.id"
-                  :value="plan.id"
-                  @click="addToPlan(plan.id, attraction.id)"
-                >
-                  {{ plan.title }}
+              <!-- 드롭다운 버튼 추가 -->
+              <div class="dropdown" @click="toggleDropdown(attraction.id)">
+                <button class="icon-btn add-btn">
+                  <div class="add-icon"></div>
+                  <div class="btn-txt">Add to Plan ▶</div>
                 </button>
+                <div
+                  v-if="dropdownStates[attraction.id]"
+                  class="dropdown-content"
+                >
+                  <button
+                    v-for="plan in plans"
+                    :key="plan.id"
+                    :value="plan.id"
+                    @click="addToPlan(plan.id, attraction.id)"
+                  >
+                    {{ plan.title }}
+                  </button>
+                </div>
               </div>
             </div>
+            <button @click="goToType(type.value)" style="height: 80px">
+              + 더보기
+            </button>
           </div>
-          <button @click="goToType(type.value)" style="height: 80px">
-            + 더보기
-          </button>
         </div>
       </div>
+      <AttractionList
+        :keyword="keyword"
+        :type="activeType"
+        :attractions="attractions[activeType]"
+        :has-more="hasMore[activeType]"
+        :current-page="currentPage[activeType]"
+        :total-pages="totalPages[activeType]"
+        @load-more="loadMore"
+        @change-page="changePage"
+        v-if="isCalled"
+        :maxLength="25"
+      />
     </div>
-    <AttractionList
-      :keyword="keyword"
-      :type="activeType"
-      :attractions="attractions[activeType]"
-      :has-more="hasMore[activeType]"
-      :current-page="currentPage[activeType]"
-      :total-pages="totalPages[activeType]"
-      @load-more="loadMore"
-      @change-page="changePage"
-      v-if="isCalled"
-      :maxLength="25"
-    />
-  </div>
-</template>
+  </template>
 </template>
 
 <style scoped>
@@ -408,7 +410,6 @@ getPlanList();
   height: 10%;
   overflow-x: auto; /* 가로 스크롤을 활성화합니다. */
   white-space: nowrap; /* 탭이 넘칠 경우 한 줄로 표시합니다. */
-
 }
 
 .tabs button {
@@ -416,7 +417,6 @@ getPlanList();
   border: none;
   cursor: pointer;
   white-space: nowrap; /* 탭 텍스트가 넘칠 경우 한 줄로 표시합니다. */
-
 }
 
 .tabs button.active {
@@ -428,7 +428,7 @@ getPlanList();
   padding-left: 20px;
   margin-bottom: 30px;
   margin-top: 20px;
-} 
+}
 
 .attraction-section {
   margin-bottom: 40px;

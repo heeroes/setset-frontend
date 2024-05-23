@@ -12,7 +12,9 @@ const searchKeyword = () => {
 
 <template>
   <div class="img">
-    <h2>setset에서 안전한 여행지를 찾아보세요.</h2>
+    <div class="content">
+    <h2>세트쉐투에서
+      <br> 안전한 여행지를 찾아보세요</h2>
     <form class="form" @submit.prevent="searchKeyword">
       <button type="button">
         <svg
@@ -61,17 +63,30 @@ const searchKeyword = () => {
         </svg>
       </button>
     </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .img {
-  height: 300px;
-  background-image: url("@/assets/img/main_image.jpg");
+  height: 400px;
+  background-image: url("@/assets/img/jeju-island-6929634_1920.jpg");
   background-position: center;
   background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
+.content {
+  align-items: center;
+  gap: 20px; /* Add some space between the h2 and form */
+}
+h2 {
+  color: white;
+  margin: 0; 
+  margin-bottom: 5px;
+  font-size: 26px
+}
 /* From uiverse.io by @satyamchaudharydev */
 /* removing default style of button */
 
@@ -83,7 +98,7 @@ const searchKeyword = () => {
 /* styling of whole input container */
 .form {
   --timing: 0.3s;
-  --width-of-input: 80%;
+  --width-of-input: 600px;
   --height-of-input: 40px;
   --border-height: 2px;
   --input-bg: #fff;

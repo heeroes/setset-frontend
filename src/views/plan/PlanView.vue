@@ -18,5 +18,11 @@ import PlanListView from "@/components/plan/PlanListView.vue";
   background-image: url("@/assets/img/plan/plan_list.png");
   background-position: center;
   background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  font-size: 38px;
 }
 </style>

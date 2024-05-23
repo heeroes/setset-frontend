@@ -103,7 +103,8 @@ const inviteMembers = async () => {
 
 const leaveGroup = async (groupId) => {
   try {
-    alert("정말 탈퇴하시겠습니까?");
+    const answer = confirm("정말 탈퇴하시겠습니까?");
+    if (!answer) return;
     const response = await groupApi.delete("/" + groupId + "/user");
     alert("탈퇴되었습니다.");
     getGroupList();
@@ -116,24 +117,39 @@ const leaveGroup = async (groupId) => {
 </script>
 
 <template>
-  
   <div class="group-list">
     <div v-for="group in groupList" class="group">
       <div class="group-content">
         <span class="title">{{ group.name }}</span>
         <div class="buttons">
           <button class="add-button" @click="openAddUserModal(group.id)">
- <span class="span"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 23 21" height="15" width="17" class="svg-icon">
-                        <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="black" d="M1.97742 19.7776C4.45061 17.1544 7.80838 15.5423 11.5068 15.5423C15.2053 15.5423 18.5631 17.1544 21.0362 19.7776M16.2715 6.54229C16.2715 9.17377 14.1383 11.307 11.5068 11.307C8.87535 11.307 6.74212 9.17377 6.74212 6.54229C6.74212 3.91082 8.87535 1.77759 11.5068 1.77759C14.1383 1.77759 16.2715 3.91082 16.2715 6.54229Z"></path>
-                    </svg></span>
-  <span class="lable">Invite</span>
-</button>
-<!-- <button>-</button> -->
-<button class="delete-button" @click="leaveGroup(group.id)">
-  <svg class="delete-svgIcon" viewBox="0 0 448 512">
-                    <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
-                  </svg>
-</button>
+            <span class="span"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 23 21"
+                height="15"
+                width="17"
+                class="svg-icon"
+              >
+                <path
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  stroke="black"
+                  d="M1.97742 19.7776C4.45061 17.1544 7.80838 15.5423 11.5068 15.5423C15.2053 15.5423 18.5631 17.1544 21.0362 19.7776M16.2715 6.54229C16.2715 9.17377 14.1383 11.307 11.5068 11.307C8.87535 11.307 6.74212 9.17377 6.74212 6.54229C6.74212 3.91082 8.87535 1.77759 11.5068 1.77759C14.1383 1.77759 16.2715 3.91082 16.2715 6.54229Z"
+                ></path></svg
+            ></span>
+            <span class="lable">Invite</span>
+          </button>
+          <!-- <button>-</button> -->
+          <button class="delete-button" @click="leaveGroup(group.id)">
+            <svg class="delete-svgIcon" viewBox="0 0 448 512">
+              <path
+                d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
+              ></path>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -187,13 +203,17 @@ const leaveGroup = async (groupId) => {
         최대 5개의 이메일만 추가할 수 있습니다.
       </div>
       <div class="space-y-2">
-      <div v-for="(email, index) in emails" :key="index" class="email-item">
-        {{ email }}
-        <button @click="removeEmail(index)">x</button>
+        <div v-for="(email, index) in emails" :key="index" class="email-item">
+          {{ email }}
+          <button @click="removeEmail(index)">x</button>
+        </div>
       </div>
-    </div>
-      <button @click="inviteMembers" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-        초대</button>
+      <button
+        @click="inviteMembers"
+        class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+      >
+        초대
+      </button>
     </div>
   </div>
 </template>
@@ -216,7 +236,7 @@ const leaveGroup = async (groupId) => {
   align-items: center;
   width: 100%;
 }
-.title{
+.title {
   padding: 10px;
   background-color: white;
   margin: 5px 0;
@@ -228,7 +248,6 @@ const leaveGroup = async (groupId) => {
   display: flex;
   gap: 5px;
   position: relative; /* 추가 */
-
 }
 /* 구성원 추가 버튼 */
 .add-button {
@@ -294,7 +313,7 @@ const leaveGroup = async (groupId) => {
   border-radius: 50%;
   cursor: pointer;
   z-index: 999;
-  margin-left: auto
+  margin-left: auto;
 }
 
 .delete-svgIcon {
@@ -326,7 +345,6 @@ const leaveGroup = async (groupId) => {
   border: 1px solid #888;
   width: 80%;
   z-index: 10000; /* Increase the z-index value */
-
 }
 
 .close {

@@ -271,10 +271,10 @@ img {
   position: absolute;
   left: 0;
   bottom: -60px;
-  background: #f6e58d;
-  color: #888;
+  background: #efe092;
+  color: #31332f;
   height: 2.5em;
-  width: 90%;
+  width: 100%;
   transition: all 80ms;
   font-weight: 600;
   text-transform: uppercase;

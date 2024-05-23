@@ -59,7 +59,8 @@ const goPlanDetail = (planId) => {
     <div v-if="isValidJson">
       <div class="travel-plan" @click="goPlanDetail(travelPlan.planId)">
         <div class="header">
-          <h3>{{ travelPlan.region }} 여행 계획</h3>
+          <h3 style="font-size: large;  border-bottom: 2px solid #1abc9c;
+">📌 {{ travelPlan.region }} 여행 계획</h3>
         </div>
         <div class="summary">
           <div class="days-circle">{{ travelPlan.days }}</div>
@@ -67,7 +68,6 @@ const goPlanDetail = (planId) => {
             <li>출발 날짜: {{ travelPlan.start_date }}</li>
             <li>여행지역: {{ travelPlan.region }}</li>
             <li>총 {{ travelPlan.total_attraction }}개 여행지 🎉</li>
-            <li>조심히 다녀올게요~</li>
           </ul>
         </div>
         <div class="tags">
@@ -94,6 +94,9 @@ const goPlanDetail = (planId) => {
   margin: 20px 0;
   background-color: #f9f9f9;
   position: relative;
+  display: flex;
+  flex-direction: column;
+
 }
 
 .header {
@@ -103,21 +106,13 @@ const goPlanDetail = (planId) => {
   margin-bottom: 15px;
 }
 
-.public-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-}
-
 .summary {
   display: flex;
   align-items: center;
 }
 
 .days-circle {
-  background-color: #00bcd4;
+  background-color: #95D03A;
   color: white;
   border-radius: 50%;
   width: 80px;
@@ -141,6 +136,8 @@ const goPlanDetail = (planId) => {
 }
 
 .tags {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽으로 정렬 */
   margin-top: 10px;
 }
 

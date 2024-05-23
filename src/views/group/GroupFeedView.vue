@@ -15,11 +15,31 @@ function onGroupSelected(group) {
 </script>
 
 <template>
-  <div>
-    <h1>그룹 피드</h1>
-    <GroupListView @groupSelected="onGroupSelected"/>
-    <FeedListView :selectedGroup="selectedGroup"/>
+  <div class="container">
+    <div class="group-list-view">
+      <GroupListView @groupSelected="onGroupSelected"/>
+    </div>
+    <div class="feed-list-view">
+      <FeedListView :selectedGroup="selectedGroup"/>
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top : 20px;
+}
+
+.group-list-view {
+  width: 30%;
+  margin-right: 20px;
+  padding: 10px;
+}
+
+.feed-list-view {
+  flex: 1;
+}
+</style>

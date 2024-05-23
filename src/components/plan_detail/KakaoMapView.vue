@@ -161,12 +161,13 @@ preHospitalInfo();
 </script>
 
 <template>
-  <div class="agencyType">
-    <button @click="getSafeMap(`police`)">근처 경찰서</button>
-    <button @click="getSafeMap(`hospital`)">근처 응급센터</button>
-    <button @click="getSafeMap(`guardHouse`)">근처 안전지킴이집</button>
+  <div class="map-container">
+  <div class="agencyType" style="background-color: white; width: 100%;">
+    <button @click="getSafeMap(`police`)"><span class="safe-info-icon">🚔</span> 근처 경찰서</button>
+    <button @click="getSafeMap(`hospital`)"><span class="safe-info-icon">🚑</span> 근처 응급센터</button>
+    <button @click="getSafeMap(`guardHouse`)"><span class="safe-info-icon">🚨</span> 근처 안전지킴이집</button>
   </div>
-  <KakaoMap width="100%" height="100%" :lat="lat" :lng="lng" :level="8">
+  <KakaoMap width="100%" height="calc(100% - 150px)" :lat="lat" :lng="lng" :level="8">
     <template v-for="(markers, index) in markerList" :key="index">
       <KakaoMapMarkerPolyline
         :endArrow="true"
@@ -230,6 +231,44 @@ preHospitalInfo();
       />
     </template>
   </KakaoMap>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+.map-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: white;
+  border: none;
+}
+.agencyType {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+}
+.map-container KakaoMap {
+  flex: 1;
+}
+
+button {
+  margin: 0 0.5em;
+  padding: 0.5em 1em;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #F5F5F5;
+}
+
+.safe-info-icon{
+  border-radius: 99%;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 4px;
+}
+</style>

@@ -8,7 +8,7 @@ const props = defineProps({
   isVisible: Boolean,
   planId: Number,
 });
-console.log(props.planId);
+console.log("planId:",props.planId);
 
 const emit = defineEmits();
 const selectedList = ref("");
@@ -44,7 +44,9 @@ const getLink = async () => {
 };
 
 const close = () => {
+  console.log("child close")
   emit("close");
+  
 };
 const updateOptions = () => {
   // selectedGroup.value = "";
@@ -54,24 +56,27 @@ const updateOptions = () => {
 <template>
   <div v-if="isVisible" class="modal-overlay">
     <div class="modal">
+      <button @click="close" style="margin-bottom: 5px;">X</button>
+      <div class="modal-content" style="text-align: center;">
+      <h3 class="heading"> Share Your Plan </h3>
       <div>
-        <label>공유 방법</label>
-        <select v-model="selectedList" @change="updateOptions">
+        <label style="margin-right: 15px;">공유 방법</label>
+        <select v-model="selectedList" @change="updateOptions" style="border-radius: 20px;  box-shadow: #cff0ff 0px 10px 10px -5px;">
           <option value="summary">게시판 공유</option>
           <option value="link">링크 공유</option>
         </select>
       </div>
       <div v-if="selectedList === 'summary'">
-        <label>옵션 선택:</label>
-        <select v-model="selectedGroup">
+        <label style="margin-right: 15px;">옵션 선택:</label>
+        <select v-model="selectedGroup" style="border-radius: 20px;  box-shadow: #cff0ff 0px 10px 10px -5px;">
           <option v-for="group in groups" :key="group.id" :value="group.id">
             {{ group.name }}
           </option>
         </select>
       </div>
-      <div v-if="isGetLink">{{ shareLink }}</div>
-      <button @click="sharePlan">공유하기</button>
-      <button @click="close">close</button>
+    </div>
+      <div v-if="isGetLink" style="margin-top: 10px; font-size: 18px;">{{ shareLink }}</div>
+      <button class="share-btn" @click="sharePlan">공유하기</button>
     </div>
   </div>
 </template>
@@ -87,14 +92,44 @@ const updateOptions = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2;
 }
 
 .modal {
-  background: white;
+  /* background: white;
   padding: 20px;
   border-radius: 5px;
   width: 300px;
   max-width: 100%;
-  z-index: 9999;
+  z-index: 3; */
+  max-width: 350px;
+  background: #F8F9FD;
+  background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+  border-radius: 40px;
+  padding: 25px 35px;
+  border: 5px solid rgb(255, 255, 255);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+  margin: 20px;
+}
+
+.heading {
+  text-align: center;
+  font-weight: 900;
+  font-size: 30px;
+  color: rgb(16, 137, 211);
+}
+
+.share-btn{
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+  color: white;
+  padding-block: 15px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+  border: none;
+  transition: all 0.2s ease-in-out;
 }
 </style>

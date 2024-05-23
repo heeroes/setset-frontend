@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import planApi from "@/api/plan";
-import PlanDetailShareView from "@/components/plan_detail/PlanDetailShareView.vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
@@ -83,10 +82,7 @@ const sharePlan = () => {
 const changePlan = () => {
   getDetail();
 };
-const close = () => {
-  isUpdateShow.value = false;
-  isVisible.value = false;
-};
+
 
 const isUpdateShow = ref(false);
 const updateShow = () => {
@@ -105,6 +101,9 @@ const updatePlan = async () => {
       console.error(error);
     });
 };
+const close = () => {
+  isUpdateShow.value = false;
+};
 </script>
 <template>
   <div
@@ -115,6 +114,7 @@ const updatePlan = async () => {
       class="hamburger"
       @click="toggleSidebar"
       :style="{ zIndex: isSidebarOpen ? '1001' : '0' }"
+      
     >
       {{ isSidebarOpen ? "X" : "☰" }}
     </button>
@@ -140,18 +140,17 @@ const updatePlan = async () => {
         </button>
         <div v-if="isUpdateShow" class="modal-overlay">
           <div class="modal">
+            <button @click="close" style="margin-bottom: 5px;">X</button>
+            <div class="heading">Edit Plan</div>
             <form @submit.prevent="updatePlan">
-              여행명 : <input type="text" v-model="plan.title" /> <br />
-              여행 지역:
-              <input type="text" v-model="plan.region" />
-              <br />
-              시작 날짜 :
+              <input class="update-info" type="text" v-model="plan.title" />
+              <input class="update-info" type="text" v-model="plan.region" />
+              <div class="update-info">
               <input type="date" v-model="plan.startDate" :max="plan.endDate" />
-              <br />
-              끝 날짜 :
+               ~ 
               <input type="date" v-model="plan.endDate" :min="plan.startDate" />
-              <input type="submit" value="수정하기" />
-              <input type="button" @click="close" value="닫기" />
+            </div>
+              <input class="update-btn" type="submit" value="수정하기" />
             </form>
           </div>
         </div>
@@ -166,18 +165,11 @@ const updatePlan = async () => {
           />
         </div>
         <div class="content-area">
-          <div class="tabs" v-show="!isGuest">
-            <button @click="sharePlan">공유</button>
-            <PlanDetailShareView
-              :isVisible="isVisible"
-              :planId="id"
-              @close="close"
-            />
-          </div>
           <PlanDetailListView
             :key="planDetailArrays"
             :planDetailArrays="planDetailArrays"
             :planId="id"
+            :isGuest="isGuest"
             @changePlan="changePlan"
           />
         </div>
@@ -193,7 +185,7 @@ const updatePlan = async () => {
   margin-top: 10px;
 }
 .hamburger {
-  font-size: 24px;
+  font-size: 40px;
   cursor: pointer;
   position: fixed;
   left: 10px;
@@ -201,18 +193,18 @@ const updatePlan = async () => {
   transition: top 0.3s; /* top 속성에 대한 전환 효과 추가 */
 }
 .sidebar {
-  width: 300px;
+  width: 30%;
   height: 100%;
   position: fixed;
   top: 0;
-  left: -300px; /* 초기 위치를 화면 밖으로 */
+  left: -30%; /* 초기 위치를 화면 밖으로 */
   transition: transform 0.3s;
   z-index: 999;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-open {
-  transform: translateX(300px);
+  transform: translateX(30%);
   /* 사이드바를 보이도록 이동 */
 }
 
@@ -301,7 +293,6 @@ const updatePlan = async () => {
   z-index: 999;
 }
 /* 수정 모달 */
-
 .updatePlan-btn {
   border-radius: 99px;
   border: 2px solid #333; /* 경계선 추가 및 색상 지정 */
@@ -309,14 +300,68 @@ const updatePlan = async () => {
   font-size: 12px;
 }
 .modal {
-  background: white;
+  /* background: white;
   padding: 20px;
   border-radius: 5px;
   width: 300px;
   max-width: 100%;
-  z-index: 9999;
+  z-index: 9999; */
+  max-width: 400px;
+  background: #F8F9FD;
+  background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+  border-radius: 40px;
+  padding: 25px 35px;
+  border: 5px solid rgb(255, 255, 255);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+  margin: 20px;
+
+}
+.heading {
+  text-align: center;
+  font-weight: 900;
+  font-size: 30px;
+  color: rgb(16, 137, 211);
 }
 
+.form {
+  margin-top: 20px;
+}
+
+.update-info{
+  width: 100%;
+  background: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 20px;
+  margin-top: 15px;
+  box-shadow: #cff0ff 0px 10px 10px -5px;
+  border-inline: 2px solid transparent;
+  display: flex;
+  align-items: center;
+}
+.update-btn{
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+  color: white;
+  padding-block: 15px;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.form .update-btn {
+  transform: scale(1.03);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px;
+}
+
+.form .update-btn {
+  transform: scale(0.95);
+  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px;
+}
 .title-and-map {
   display: flex;
 }

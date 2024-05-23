@@ -245,6 +245,7 @@ getPlanList();
       :has-more="hasMore[activeType]"
       :current-page="currentPage[activeType]"
       :total-pages="totalPages[activeType]"
+      :maxLength="65"
       @load-more="loadMore"
       @change-page="changePage"
       v-if="isCalled"
@@ -262,12 +263,16 @@ getPlanList();
   padding: 0.75rem;
   border-radius: 99px;
   position: relative;
+  width: 100%;
+  /* height: 30%; */
 }
 
 .tabs button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
+  /* width: 12%; */
+  /* height: 8%; */
 }
 
 .tabs button.active {

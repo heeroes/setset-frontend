@@ -130,9 +130,9 @@ const addToPlan = async (planId, attractionId) => {
     alert("Failed to add attraction to plan");
   }
 };
-const dropdownIndex = ref(null);
-const toggleDropdown = (index) => {
-  dropdownIndex.value = dropdownIndex.value === index ? null : index;
+const dropdownStates = ref({});
+const toggleDropdown = (attractionId) => {
+  dropdownStates.value[attractionId] = !dropdownStates.value[attractionId];
 };
 
 const searchDetail = (id) => {
@@ -209,12 +209,15 @@ getPlanList();
               </div>
             </div>
             <!-- 드롭다운 버튼 추가 -->
-            <div class="dropdown" @click="toggleDropdown(index)">
+            <div class="dropdown" @click="toggleDropdown(attraction.id)">
               <button class="icon-btn add-btn">
                 <div class="add-icon"></div>
                 <div class="btn-txt">Add to Plan ▶</div>
               </button>
-              <div v-if="dropdownIndex === index" class="dropdown-content">
+              <div
+                v-if="dropdownStates[attraction.id]"
+                class="dropdown-content"
+              >
                 <button
                   v-for="plan in plans"
                   :key="plan.id"
@@ -230,11 +233,11 @@ getPlanList();
             + 더보기
           </button>
         </div>
-        <div v-else>
-          <p>검색 결과가 없습니다.</p>
-        </div>
       </div>
     </div>
+    <!-- <div v-else>
+      <p>검색 결과가 없습니다.</p>
+    </div> -->
     <AttractionList
       :keyword="keyword"
       :type="activeType"

@@ -83,7 +83,6 @@ const changePlan = () => {
   getDetail();
 };
 
-
 const isUpdateShow = ref(false);
 const updateShow = () => {
   isUpdateShow.value = !isUpdateShow.value;
@@ -114,7 +113,6 @@ const close = () => {
       class="hamburger"
       @click="toggleSidebar"
       :style="{ zIndex: isSidebarOpen ? '1001' : '0' }"
-      
     >
       {{ isSidebarOpen ? "X" : "☰" }}
     </button>
@@ -140,16 +138,24 @@ const close = () => {
         </button>
         <div v-if="isUpdateShow" class="modal-overlay">
           <div class="modal">
-            <button @click="close" style="margin-bottom: 5px;">X</button>
+            <button @click="close" style="margin-bottom: 5px">X</button>
             <div class="heading">Edit Plan</div>
             <form @submit.prevent="updatePlan">
               <input class="update-info" type="text" v-model="plan.title" />
               <input class="update-info" type="text" v-model="plan.region" />
               <div class="update-info">
-              <input type="date" v-model="plan.startDate" :max="plan.endDate" />
-               ~ 
-              <input type="date" v-model="plan.endDate" :min="plan.startDate" />
-            </div>
+                <input
+                  type="date"
+                  v-model="plan.startDate"
+                  :max="plan.endDate"
+                />
+                ~
+                <input
+                  type="date"
+                  v-model="plan.endDate"
+                  :min="plan.startDate"
+                />
+              </div>
               <input class="update-btn" type="submit" value="수정하기" />
             </form>
           </div>
@@ -230,7 +236,7 @@ const close = () => {
   background-color: #abd373;
   border-radius: 99px;
   color: white;
-  width: 5%;
+  width: 12%;
   text-align: center;
   padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
 }
@@ -307,14 +313,17 @@ const close = () => {
   max-width: 100%;
   z-index: 9999; */
   max-width: 400px;
-  background: #F8F9FD;
-  background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+  background: #f8f9fd;
+  background: linear-gradient(
+    0deg,
+    rgb(255, 255, 255) 0%,
+    rgb(244, 247, 251) 100%
+  );
   border-radius: 40px;
   padding: 25px 35px;
   border: 5px solid rgb(255, 255, 255);
   box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
   margin: 20px;
-
 }
 .heading {
   text-align: center;
@@ -327,7 +336,7 @@ const close = () => {
   margin-top: 20px;
 }
 
-.update-info{
+.update-info {
   width: 100%;
   background: white;
   border: none;
@@ -339,11 +348,15 @@ const close = () => {
   display: flex;
   align-items: center;
 }
-.update-btn{
+.update-btn {
   display: block;
   width: 100%;
   font-weight: bold;
-  background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+  background: linear-gradient(
+    45deg,
+    rgb(16, 137, 211) 0%,
+    rgb(18, 177, 209) 100%
+  );
   color: white;
   padding-block: 15px;
   margin: 20px auto;

@@ -129,11 +129,14 @@ const toggleDropdown = (index) => {
 </script>
 
 <template>
-  <div>
-    <h2>{{ selectedGroup ? selectedGroup.name : "" }}</h2>
+  <div class="header-wrapper">
+    <h2 style="font-size: 24px; margin-left: 20px;  border-bottom: 2px solid #1abc9c;">{{ selectedGroup ? selectedGroup.name : "" }}</h2>
     <RouterLink :to="{ name: 'NewArticle', params: { id: groupId } }">
-      <button>new</button>
+      <button v-if="selectedGroup" class="new-btn">
+        <label class="new-btn-name">new</label>
+      </button>
     </RouterLink>
+  </div>
     <ul v-if="selectedGroup">
       <div class="feed">
         <div
@@ -159,7 +162,6 @@ const toggleDropdown = (index) => {
             <div class="dropdown" @click="toggleDropdown(index)">
               ⋮
               <div v-if="dropdownIndex === index" class="dropdown-content">
-                <button @click="editArticle(article.id)">수정</button>
                 <button @click="deleteArticle(article.id)">삭제</button>
               </div>
             </div>
@@ -229,10 +231,43 @@ const toggleDropdown = (index) => {
       </div>
     </ul>
     <p v-else>그룹을 선택해주세요.</p>
-  </div>
 </template>
 
 <style scoped>
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px; /* 헤더와 피드 사이의 간격 조정 */
+}
+.new-btn {
+  width: 100px;
+  height: 32px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #95D03A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  justify-content: space-between;
+  transition: all 0.3s;
+  margin-right: 20px;
+}
+
+.new-btnve:hover {
+  opacity: 0.85;
+  transform: translateY(-4px);
+}
+
+.new-btn-name{
+  font-size: 12px;
+  line-height: 32px;
+  color: #95D03A;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0 auto;
+}
 .feed {
   width: 100%;
   max-width: 600px;

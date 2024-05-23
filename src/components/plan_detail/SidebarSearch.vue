@@ -6,7 +6,7 @@ const keyword = ref("");
 </script>
 
 <template>
-  <div>
+  <div style="background-color: gray">
     <form class="form" @submit.prevent="searchKeyword">
       <button type="button">
         <svg

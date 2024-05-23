@@ -275,11 +275,11 @@ const toggleDropdown = (index) => {
 }
 
 .post {
-  border: 1px solid #ddd;
   margin-bottom: 20px;
   background: #fff;
   padding: 20px;
   border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
 .post-header {
@@ -415,7 +415,7 @@ const toggleDropdown = (index) => {
 .comment-form button {
   padding: 5px 10px;
   margin-left: 10px;
-  background-color: #007bff;
+  background-color: #95D03A;
   color: white;
   border: none;
   border-radius: 5px;

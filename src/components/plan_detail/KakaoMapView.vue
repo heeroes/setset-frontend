@@ -1,6 +1,11 @@
 <script setup>
 import { defineProps, ref } from "vue";
-import { KakaoMap, KakaoMapPolyline, KakaoMapMarker } from "vue3-kakao-maps";
+import {
+  KakaoMap,
+  KakaoMapPolyline,
+  KakaoMapMarker,
+  KakaoMapInfoWindow,
+} from "vue3-kakao-maps";
 
 import mapMarker0 from "@/assets/img/map/map_marker_0.png";
 import safeApi from "@/api/safe";
@@ -22,6 +27,8 @@ const lng = ref(126.573);
 const defaultMarkers = ref([]);
 
 const orderBottomMargin = ref("40px");
+
+const mouseOver = ref(false);
 
 async function getCarDirection(points) {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -118,6 +125,9 @@ for (let i = 1; i < props.planDetailArrays.length; i++) {
       markersForDay.push({
         lat: detail.attraction.latitude,
         lng: detail.attraction.longitude,
+        attTitle: detail.attraction.title,
+        attAddr: detail.attraction.addr,
+        isVisible: false,
         image,
       });
     }
@@ -142,9 +152,24 @@ if (props.planDetailArrays[0]) {
       lat: detail.attraction.latitude,
       lng: detail.attraction.longitude,
       attTitle: detail.attraction.title,
+      attAddr: detail.attraction.addr,
+      isVisible: false,
     });
   }
 }
+
+const generateContent = (day, marker) => {
+  const dayContent = !isNaN(day) ? `<p>${day + 1}일차</p>` : "";
+  return `<div>
+                ${dayContent}
+                <p>${marker.attTitle}</p>
+                <p>${marker.attAddr}</p>
+              </div>`;
+};
+
+const toggleVisible = (marker) => {
+  marker.isVisible = !marker.isVisible;
+};
 
 // 안전 정보 마커 리스트
 const hospitalInfo = ref([]);
@@ -212,6 +237,7 @@ const fetchSafeMap = async (agencyType) => {
       name: safe.name,
       address: safe.address,
       tel: safe.tel,
+      isVisible: false,
       image: `/src/assets/img/map/${agencyType}_marker.png`,
     });
   }
@@ -230,12 +256,21 @@ const preHospitalInfo = async () => {
         name: safe.name,
         address: safe.address,
         tel: safe.tel,
+        isVisible: false,
         image: `/src/assets/img/map/hospital_marker.png`,
       });
     }
   } catch (error) {
     console.log("안전정보 마커 에러", error);
   }
+};
+
+const generateSafeInfo = (marker) => {
+  return `<div>
+                <p>${marker.name}</p>
+                <p>${marker.address}</p>
+                <p>${marker.tel}</p>
+              </div>`;
 };
 
 // 페이지 로딩될 때 미리 데이터 받아 놓기
@@ -271,10 +306,7 @@ preHospitalInfo();
       </template>
 
       <template v-for="(markers, index) in markerList" :key="index">
-        <template
-          v-for="(marker, mark_idx) in markers"
-          :key="marker.lat + marker.lng"
-        >
+        <template v-for="(marker, mark_idx) in markers" :key="mark_idx">
           <KakaoMapMarker
             :lat="marker.lat"
             :lng="marker.lng"
@@ -285,6 +317,13 @@ preHospitalInfo();
             }"
             :order="mark_idx + 1"
             :order-bottom-margin="orderBottomMargin"
+            @mouse-over-kakao-map-marker="toggleVisible(marker)"
+            @mouse-out-kakao-map-marker="toggleVisible(marker)"
+            :info-window="{
+              content: generateContent(index, marker),
+              visible: marker.isVisible,
+              width: '200px',
+            }"
           />
         </template>
       </template>
@@ -299,6 +338,13 @@ preHospitalInfo();
             imageHeight: 48,
             imageOption: {},
           }"
+          @mouse-over-kakao-map-marker="toggleVisible(marker)"
+          @mouse-out-kakao-map-marker="toggleVisible(marker)"
+          :info-window="{
+            content: generateContent(index, marker),
+            visible: marker.isVisible,
+            width: '200px',
+          }"
         />
       </template>
 
@@ -311,6 +357,12 @@ preHospitalInfo();
             imageWidth: 40,
             imageHeight: 40,
             imageOption: {},
+          }"
+          @mouse-over-kakao-map-marker="toggleVisible(marker)"
+          @mouse-out-kakao-map-marker="toggleVisible(marker)"
+          :info-window="{
+            content: generateSafeInfo(marker),
+            visible: marker.isVisible,
           }"
           v-if="isHospital"
         />
@@ -325,6 +377,12 @@ preHospitalInfo();
             imageHeight: 40,
             imageOption: {},
           }"
+          @mouse-over-kakao-map-marker="toggleVisible(marker)"
+          @mouse-out-kakao-map-marker="toggleVisible(marker)"
+          :info-window="{
+            content: generateSafeInfo(marker),
+            visible: marker.isVisible,
+          }"
           v-if="isPoliceInfo"
         />
       </template>
@@ -337,6 +395,12 @@ preHospitalInfo();
             imageWidth: 40,
             imageHeight: 40,
             imageOption: {},
+          }"
+          @mouse-over-kakao-map-marker="toggleVisible(marker)"
+          @mouse-out-kakao-map-marker="toggleVisible(marker)"
+          :info-window="{
+            content: generateSafeInfo(marker),
+            visible: marker.isVisible,
           }"
           v-if="isGuardHouse"
         />

@@ -159,11 +159,13 @@ if (props.planDetailArrays[0]) {
 }
 
 const generateContent = (day, marker) => {
-  const dayContent = !isNaN(day) ? `<p>${day + 1}일차</p>` : "";
-  return `<div>
+  const dayContent = !isNaN(day)
+    ? `<div style="text-align:center">${day + 1}일차</div>`
+    : "";
+  return `<div style="padding:0px; margin:0px; width:300px">
                 ${dayContent}
-                <p>${marker.attTitle}</p>
-                <p>${marker.attAddr}</p>
+                <div style="text-align:center">${marker.attTitle}</div>
+                <div style="text-align:center">${marker.attAddr}</div>
               </div>`;
 };
 
@@ -266,10 +268,10 @@ const preHospitalInfo = async () => {
 };
 
 const generateSafeInfo = (marker) => {
-  return `<div>
-                <p>${marker.name}</p>
-                <p>${marker.address}</p>
-                <p>${marker.tel}</p>
+  return `<div style="padding:0px; margin:0px; width:300px">
+                <div style="text-align:center;">${marker.name}</div>
+                <div style="text-align:center;">${marker.address}</div>
+                <div style="text-align:center;">${marker.tel}</div>
               </div>`;
 };
 

@@ -1,10 +1,6 @@
 <script setup>
 import { defineProps, ref } from "vue";
-import {
-  KakaoMap,
-  KakaoMapMarkerPolyline,
-  KakaoMapMarker,
-} from "vue3-kakao-maps";
+import { KakaoMap, KakaoMapPolyline, KakaoMapMarker } from "vue3-kakao-maps";
 
 import mapMarker0 from "@/assets/img/map/map_marker_0.png";
 import safeApi from "@/api/safe";
@@ -15,6 +11,9 @@ const props = defineProps(["planDetailArrays", "planId"]);
 // 마커 리스트 초기화
 const markerList = ref([]);
 
+const polyList = ref([]);
+const polyForDay = ref([]);
+
 // 초기 좌표
 const lat = ref(33.452);
 const lng = ref(126.573);
@@ -22,16 +21,95 @@ const lng = ref(126.573);
 // 기본 마커 리스트
 const defaultMarkers = ref([]);
 
+const orderBottomMargin = ref("40px");
+
+async function getCarDirection(points) {
+  const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
+  // 호출방식의 URL을 입력합니다.
+  const url = import.meta.env.VITE_KAKAO_MOBILITY_URL;
+
+  console.log("url : ", url);
+  const origin = {
+    x: points[0].attraction.longitude,
+    y: points[0].attraction.latitude,
+  };
+  const destination = {
+    x: points[points.length - 1].attraction.longitude,
+    y: points[points.length - 1].attraction.latitude,
+  };
+  const waypoints = ref([]);
+  for (let i = 1; i < points.length - 1; i++) {
+    waypoints.value.push({
+      x: points[i].attraction.longitude,
+      y: points[i].attraction.latitude,
+    });
+  }
+
+  const content = {
+    origin: origin,
+    destination: destination,
+    waypoints: waypoints.value,
+  };
+
+  // 요청 헤더를 추가합니다.
+  const headers = {
+    Authorization: `KakaoAK ${REST_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  console.log("content : ", content);
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(content),
+    });
+
+    console.log("response : ", response);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    polyForDay.value.push({
+      lat: origin.y,
+      lng: origin.x,
+    });
+    data.routes[0].sections[0].roads.forEach((points) => {
+      points.vertexes.forEach((vertex, index) => {
+        if (index % 2 == 0) {
+          polyForDay.value.push({
+            lat: points.vertexes[index + 1],
+            lng: points.vertexes[index],
+          });
+        }
+      });
+    });
+    polyForDay.value.push({
+      lat: destination.y,
+      lng: destination.x,
+    });
+    polyList.value.push(polyForDay.value);
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 // 일별 마커 정보 설정
 for (let i = 1; i < props.planDetailArrays.length; i++) {
   const markersForDay = [];
+  polyForDay.value = [];
   const idx = i % 15;
   const image = {
-    imageSrc: `/src/assets/img/map/map_marker_${idx}.png?t=1716269766674`,
+    imageSrc: `/src/assets/img/map/map_marker_${idx}.png`,
     imageWidth: 48,
     imageHeight: 48,
     imageOption: {},
   };
+
   if (props.planDetailArrays[i]) {
     for (const detail of props.planDetailArrays[i]) {
       lat.value = detail.attraction.latitude;
@@ -41,14 +119,17 @@ for (let i = 1; i < props.planDetailArrays.length; i++) {
         lat: detail.attraction.latitude,
         lng: detail.attraction.longitude,
         image,
-        orderBottomMargin: "37px",
-        order: i,
       });
     }
+    markerList.value.push(markersForDay);
   }
-
-  markerList.value.push(markersForDay);
+  if (props.planDetailArrays[i].length > 1) {
+    getCarDirection(props.planDetailArrays[i]);
+  }
 }
+
+console.log("polyList : ", polyList.value);
+console.log("marker : ", markerList.value);
 
 // 기본 마커 정보 설정
 if (props.planDetailArrays[0]) {
@@ -64,6 +145,7 @@ if (props.planDetailArrays[0]) {
     });
   }
 }
+
 // 안전 정보 마커 리스트
 const hospitalInfo = ref([]);
 const policeInfo = ref([]);
@@ -162,80 +244,108 @@ preHospitalInfo();
 
 <template>
   <div class="map-container">
-  <div class="agencyType" style="background-color: white; width: 100%;">
-    <button @click="getSafeMap(`police`)"><span class="safe-info-icon">🚔</span> 근처 경찰서</button>
-    <button @click="getSafeMap(`hospital`)"><span class="safe-info-icon">🚑</span> 근처 응급센터</button>
-    <button @click="getSafeMap(`guardHouse`)"><span class="safe-info-icon">🚨</span> 근처 안전지킴이집</button>
-  </div>
-  <KakaoMap width="100%" height="calc(100% - 150px)" :lat="lat" :lng="lng" :level="8">
-    <template v-for="(markers, index) in markerList" :key="index">
-      <KakaoMapMarkerPolyline
-        :endArrow="true"
-        :markerList="markers"
-        :showMarkerOrder="true"
-        strokeColor="#C74C5E"
-        :strokeOpacity="1"
-      />
-    </template>
+    <div class="agencyType" style="background-color: white; width: 100%">
+      <button @click="getSafeMap(`police`)">
+        <span class="safe-info-icon">🚔</span> 근처 경찰서
+      </button>
+      <button @click="getSafeMap(`hospital`)">
+        <span class="safe-info-icon">🚑</span> 근처 응급센터
+      </button>
+      <button @click="getSafeMap(`guardHouse`)">
+        <span class="safe-info-icon">🚨</span> 근처 안전지킴이집
+      </button>
+    </div>
+    <KakaoMap
+      width="100%"
+      height="calc(100% - 150px)"
+      :lat="lat"
+      :lng="lng"
+      :level="8"
+    >
+      <template v-for="(polys, index) in polyList" :key="index">
+        <KakaoMapPolyline
+          :latLngList="polys"
+          strokeColor="#C74C5E"
+          :strokeOpacity="1"
+        />
+      </template>
 
-    <template v-for="marker in defaultMarkers" :key="marker.lat + marker.lng">
-      <KakaoMapMarker
-        :lat="marker.lat"
-        :lng="marker.lng"
-        :image="{
-          imageSrc: `${mapMarker0}`,
-          imageWidth: 48,
-          imageHeight: 48,
-          imageOption: {},
-        }"
-      />
-    </template>
+      <template v-for="(markers, index) in markerList" :key="index">
+        <template
+          v-for="(marker, mark_idx) in markers"
+          :key="marker.lat + marker.lng"
+        >
+          <KakaoMapMarker
+            :lat="marker.lat"
+            :lng="marker.lng"
+            :image="{
+              imageSrc: `/src/assets/img/map/map_marker_${index + 1}.png`,
+              imageWidth: 48,
+              imageHeight: 48,
+            }"
+            :order="mark_idx + 1"
+            :order-bottom-margin="orderBottomMargin"
+          />
+        </template>
+      </template>
 
-    <template v-for="marker in hospitalInfo" :key="marker.lat + marker.lng">
-      <KakaoMapMarker
-        :lat="marker.lat"
-        :lng="marker.lng"
-        :image="{
-          imageSrc: `${marker.image}`,
-          imageWidth: 40,
-          imageHeight: 40,
-          imageOption: {},
-        }"
-        v-if="isHospital"
-      />
-    </template>
-    <template v-for="marker in policeInfo" :key="marker.lat + marker.lng">
-      <KakaoMapMarker
-        :lat="marker.lat"
-        :lng="marker.lng"
-        :image="{
-          imageSrc: `${marker.image}`,
-          imageWidth: 40,
-          imageHeight: 40,
-          imageOption: {},
-        }"
-        v-if="isPoliceInfo"
-      />
-    </template>
-    <template v-for="marker in guardHouseInfo" :key="marker.lat + marker.lng">
-      <KakaoMapMarker
-        :lat="marker.lat"
-        :lng="marker.lng"
-        :image="{
-          imageSrc: `${marker.image}`,
-          imageWidth: 40,
-          imageHeight: 40,
-          imageOption: {},
-        }"
-        v-if="isGuardHouse"
-      />
-    </template>
-  </KakaoMap>
+      <template v-for="marker in defaultMarkers" :key="marker.lat + marker.lng">
+        <KakaoMapMarker
+          :lat="marker.lat"
+          :lng="marker.lng"
+          :image="{
+            imageSrc: `${mapMarker0}`,
+            imageWidth: 48,
+            imageHeight: 48,
+            imageOption: {},
+          }"
+        />
+      </template>
+
+      <template v-for="marker in hospitalInfo" :key="marker.lat + marker.lng">
+        <KakaoMapMarker
+          :lat="marker.lat"
+          :lng="marker.lng"
+          :image="{
+            imageSrc: `${marker.image}`,
+            imageWidth: 40,
+            imageHeight: 40,
+            imageOption: {},
+          }"
+          v-if="isHospital"
+        />
+      </template>
+      <template v-for="marker in policeInfo" :key="marker.lat + marker.lng">
+        <KakaoMapMarker
+          :lat="marker.lat"
+          :lng="marker.lng"
+          :image="{
+            imageSrc: `${marker.image}`,
+            imageWidth: 40,
+            imageHeight: 40,
+            imageOption: {},
+          }"
+          v-if="isPoliceInfo"
+        />
+      </template>
+      <template v-for="marker in guardHouseInfo" :key="marker.lat + marker.lng">
+        <KakaoMapMarker
+          :lat="marker.lat"
+          :lng="marker.lng"
+          :image="{
+            imageSrc: `${marker.image}`,
+            imageWidth: 40,
+            imageHeight: 40,
+            imageOption: {},
+          }"
+          v-if="isGuardHouse"
+        />
+      </template>
+    </KakaoMap>
   </div>
 </template>
 
 <style scoped>
-
 .map-container {
   display: flex;
   flex-direction: column;
@@ -263,10 +373,10 @@ button {
 }
 
 button:hover {
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
-.safe-info-icon{
+.safe-info-icon {
   border-radius: 99%;
   background-color: rgba(0, 0, 0, 0.05);
   padding: 4px;

@@ -156,7 +156,12 @@ const close = () => {
                   :min="plan.startDate"
                 />
               </div>
-              <input class="update-btn" type="submit" value="수정하기" />
+              <input
+                class="update-btn"
+                type="submit"
+                value="수정하기"
+                v-show="!isGuest"
+              />
             </form>
           </div>
         </div>

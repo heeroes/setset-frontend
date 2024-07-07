@@ -129,6 +129,7 @@ const close = () => {
         <button
           class="updatePlan-btn"
           @click="updateShow"
+          v-show="!isGuest"
           style="
             border-radius: 99px;
             border: 2px solid #333; /* 경계선 추가 및 색상 지정 */
@@ -156,12 +157,7 @@ const close = () => {
                   :min="plan.startDate"
                 />
               </div>
-              <input
-                class="update-btn"
-                type="submit"
-                value="수정하기"
-                v-show="!isGuest"
-              />
+              <input class="update-btn" type="submit" value="수정하기" />
             </form>
           </div>
         </div>

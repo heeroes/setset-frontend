@@ -9,11 +9,12 @@ const emails = ref([]);
 const maxEmails = 5;
 const showWarning = computed(() => emails.value.length >= maxEmails);
 const groupId = ref(null);
-
+const maxGroup = 5;
+console.log("그룹 수: " + groupList.value.length)
 const getGroupList = async () => {
   const { data } = await groupApi.get();
-  console.log("response : ", data);
   groupList.value = data.result;
+  console.log("그룹수:" + groupList.value.length);
 };
 getGroupList();
 
@@ -35,6 +36,10 @@ const closeCreateGroupModal = () => {
 };
 
 const createGroup = async () => {
+  if(groupList.value.length >= maxGroup){
+    alert("그룹은 최대 5개까지 추가 가능합니다.");
+    return;
+  }
   if (groupName.value != "") {
     try {
       groupInfo.value.name = groupName.value;
@@ -330,7 +335,7 @@ const leaveGroup = async (groupId) => {
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: 50%;
   z-index: 10000; /* Increase the z-index value */
 }
 

@@ -651,10 +651,6 @@ video {
   display: flex;
 }
 
-.grid {
-  display: grid;
-}
-
 .hidden {
   display: none;
 }
@@ -996,19 +992,22 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
 @font-face {
-  font-family: "WavvePADO-Regular";
+  font-family: 'LINESeedKR';
 
-  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/WavvePADO-Regular.woff2")
-    format("woff2");
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR.woff2') format('woff2');
 
-  font-weight: normal;
+  font-weight: 700;
 
   font-style: normal;
 }
 
 body {
-  font-family: "WavvePADO-Regular", wavve;
+  font-family: "LINESeedKR"
 }
 
 .after\:absolute::after {

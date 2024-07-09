@@ -16,8 +16,8 @@ const keyword = route.query.keyword;
 
 <style scoped>
 .container {
-  margin-left: 30%;
-  margin-right: 30%;
-  width: 40% /* 전체 너비에서 좌우 마진을 빼고 나머지를 너비로 설정 */
+  margin-left: 25%;
+  margin-right: 25%;
+  width: 50% /* 전체 너비에서 좌우 마진을 빼고 나머지를 너비로 설정 */
 }
 </style>

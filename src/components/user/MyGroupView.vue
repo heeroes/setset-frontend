@@ -167,7 +167,8 @@ const leaveGroup = async (groupId) => {
       <!-- 모달내용 -->
       <h2>그룹 생성</h2>
       그룹 이름 : <input v-model="groupName" type="text" />
-      <button @click="createGroup">그룹 생성</button>
+      <button @click="createGroup" 
+      class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">그룹 생성</button>
     </div>
   </div>
 

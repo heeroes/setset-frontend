@@ -43,14 +43,15 @@ const createGroup = async () => {
       alert("그룹 생성이 완료되었습니다.");
       getGroupList();
       closeCreateGroupModal();
-    } catch (error) {}
+    } catch (error) {
+      alert("그룹 생성 실패")
+    }
   } else {
     alert("그룹 이름을 입력해주세요.");
   }
 };
 
 // 구성원 초대 모달 관련 함수
-
 const openAddUserModal = (id) => {
   isAddUserModalOpen.value = true;
   groupId.value = id;
@@ -166,21 +167,6 @@ const leaveGroup = async (groupId) => {
       <!-- 모달내용 -->
       <h2>그룹 생성</h2>
       그룹 이름 : <input v-model="groupName" type="text" />
-      <h3>구성원</h3>
-      <input
-        v-model="emailInput"
-        @keyup.enter="addEmail"
-        placeholder="초대할 이메일을 입력해주세요"
-        type="email"
-      />
-      <div v-if="showWarning" class="warning">
-        최대 5개의 이메일만 추가할 수 있습니다.
-      </div>
-
-      <div v-for="(email, index) in emails" :key="index" class="email-item">
-        {{ email }}
-        <button @click="removeEmail(index)">x</button>
-      </div>
       <button @click="createGroup">그룹 생성</button>
     </div>
   </div>

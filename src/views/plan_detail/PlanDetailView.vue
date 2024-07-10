@@ -8,7 +8,7 @@ import KakaoMapView from "@/components/plan_detail/KakaoMapView.vue";
 import PlanDetailListView from "@/components/plan_detail/PlanDetailListView.vue";
 import SidebarSearch from "@/components/plan_detail/SidebarSearch.vue";
 import RegionDisasterInfoView from "@/components/plan_detail/RegionDisasterInfoView.vue";
-import { onMounted } from "vue";
+import PlanUpdateView from "@/components/plan_detail/PlanUpdateView.vue";
 
 const authStore = useAuthStore();
 const { userInfo } = storeToRefs(authStore);
@@ -50,7 +50,7 @@ watch(
     endDate.value = new Date(plan.value.endDate);
 
     const timeDifference = endDate.value - startDate.value;
-    const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+    const dayDifference = timeDifference / (1000 * 60 * 60 * 24) + 1;
     console.log("여행 일수 호출 : ", Math.ceil(dayDifference));
 
     days.value = Math.ceil(dayDifference); // 날짜 차이를 반올림해서 반환합니다
@@ -87,19 +87,8 @@ const updateShow = () => {
   isUpdateShow.value = !isUpdateShow.value;
 };
 
-const updatePlan = async () => {
-  planApi
-    .put(`/${id.value}`, plan.value)
-    .then((response) => {
-      console.log(response.data);
-      getDetail();
-      close();
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
 const close = () => {
+  getDetail();
   isUpdateShow.value = false;
 };
 
@@ -128,7 +117,7 @@ getDetail();
             #{{ region }}
           </h3>
         </div>
-        <h3 style="color: gray">{{ plan.startDate }} - {{ plan.endDate }}</h3>
+        <h3 style="color: gray">{{ plan.startDate }} ~ {{ plan.endDate }}</h3>
         <button
           class="updatePlan-btn"
           @click="updateShow"
@@ -140,30 +129,13 @@ getDetail();
         >
           수정
         </button>
-        <div v-if="isUpdateShow" class="modal-overlay">
-          <div class="modal">
-            <button @click="close" style="margin-bottom: 5px">X</button>
-            <div class="heading">Edit Plan</div>
-            <form @submit.prevent="updatePlan">
-              <input class="update-info" type="text" v-model="plan.title" />
-              <input class="update-info" type="text" v-model="plan.region" />
-              <div class="update-info">
-                <input
-                  type="date"
-                  v-model="plan.startDate"
-                  :max="plan.endDate"
-                />
-                ~
-                <input
-                  type="date"
-                  v-model="plan.endDate"
-                  :min="plan.startDate"
-                />
-              </div>
-              <input class="update-btn" type="submit" value="수정하기" />
-            </form>
-          </div>
-        </div>
+        <PlanUpdateView
+          v-if="isUpdateShow"
+          :plan="plan"
+          :id="id"
+          :planRegionList="planRegionList"
+          @close="close"
+        />
       </div>
 
       <div class="main-content">
@@ -175,7 +147,9 @@ getDetail();
               :planId="plan.id"
             />
           </div>
-          <div><RegionDisasterInfoView :planRegionList="planRegionList" /></div>
+          <div class="disaster">
+            <RegionDisasterInfoView :planRegionList="planRegionList" />
+          </div>
         </div>
         <div class="content-area">
           <PlanDetailListView
@@ -257,8 +231,11 @@ getDetail();
 .left-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-evenly;
+  margin-left: 1%;
+}
+.disaster {
+  margin-top: 10%;
 }
 .map-container {
   width: 100%;
@@ -266,7 +243,7 @@ getDetail();
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 70px 20px 0px;
+  padding: 10px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -298,18 +275,6 @@ getDetail();
   border: none;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
 /* 수정 모달 */
 .updatePlan-btn {
   border-radius: 99px;
@@ -317,26 +282,7 @@ getDetail();
   padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
   font-size: 12px;
 }
-.modal {
-  /* background: white;
-  padding: 20px;
-  border-radius: 5px;
-  width: 300px;
-  max-width: 100%;
-  z-index: 9999; */
-  max-width: 400px;
-  background: #f8f9fd;
-  background: linear-gradient(
-    0deg,
-    rgb(255, 255, 255) 0%,
-    rgb(244, 247, 251) 100%
-  );
-  border-radius: 40px;
-  padding: 25px 35px;
-  border: 5px solid rgb(255, 255, 255);
-  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
-  margin: 20px;
-}
+
 .heading {
   text-align: center;
   font-weight: 900;
@@ -346,36 +292,6 @@ getDetail();
 
 .form {
   margin-top: 20px;
-}
-
-.update-info {
-  width: 100%;
-  background: white;
-  border: none;
-  padding: 15px 20px;
-  border-radius: 20px;
-  margin-top: 15px;
-  box-shadow: #cff0ff 0px 10px 10px -5px;
-  border-inline: 2px solid transparent;
-  display: flex;
-  align-items: center;
-}
-.update-btn {
-  display: block;
-  width: 100%;
-  font-weight: bold;
-  background: linear-gradient(
-    45deg,
-    rgb(16, 137, 211) 0%,
-    rgb(18, 177, 209) 100%
-  );
-  color: white;
-  padding-block: 15px;
-  margin: 20px auto;
-  border-radius: 20px;
-  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
-  border: none;
-  transition: all 0.2s ease-in-out;
 }
 
 .form .update-btn {

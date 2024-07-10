@@ -69,6 +69,10 @@ const addRegion = () => {
     alert("지역은 3개 이하로만 선택이 가능합니다.");
     return;
   }
+  if (!selectedSido.value) {
+    alert("지역을 선택하세요.");
+    return;
+  }
   const newRegion = `${selectedSido.value} ${selectedGu.value} ${selectedDong.value}`;
   if (!selectedRegion.value.includes(newRegion))
     selectedRegion.value.push(newRegion);

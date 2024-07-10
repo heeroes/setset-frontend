@@ -2,15 +2,22 @@
 import { ref, defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import planApi from "@/api/plan";
+import cityApi from "@/api/city";
 
 const props = defineProps({
   isVisible: Boolean,
 });
 const emit = defineEmits();
 
+const cityList = ref([]);
+const selectedSido = ref("");
+const selectedGu = ref("");
+const selectedDong = ref("");
+
 const router = useRouter();
 const planInfo = ref({});
 const createPlan = async () => {
+  planInfo.value.region = `${selectedSido.value} ${selectedGu.value} ${selectedDong.value}`;
   planApi
     .post("", planInfo.value)
     .then((response) => {
@@ -28,6 +35,29 @@ const close = () => {
   planInfo.value = {};
   emit("close");
 };
+
+const getSidos = async () => {
+  const { data } = cityApi.get();
+  console.log("sido : ", data);
+  cityList.value = data;
+  selectedSido.value = "";
+};
+
+const getGus = async () => {
+  const { data } = cityApi.get(`?sido=${selectedSido.value}`);
+  console.log("Gu : ", data);
+  cityList.value = data;
+  selectedGu.value = "";
+};
+
+const getDongs = async () => {
+  const { data } = cityApi.get(
+    `?sido=${selectedSido.value}&gu=${selectedGu.value}`
+  );
+  console.log("dong : ", data);
+  cityList.value = data;
+  selectedDong = "";
+};
 </script>
 
 <template>
@@ -36,7 +66,32 @@ const close = () => {
       <form @submit.prevent="createPlan">
         계획명 : <input type="text" v-model="planInfo.title" required />
         <br />
-        지역 : <input type="text" v-model="planInfo.region" required />
+        지역 :
+        <label for="sido">시도:</label>
+        <select id="sido" v-model="selectedSido" @change="fetchGus">
+          <option v-for="sido in sidos" :key="sido" :value="sido">
+            {{ sido }}
+          </option>
+        </select>
+
+        <label for="gu">구:</label>
+        <select
+          id="gu"
+          v-model="selectedGu"
+          @change="fetchDongs"
+          :disabled="!selectedSido"
+        >
+          <option v-for="gu in gus" :key="gu" :value="gu">{{ gu }}</option>
+        </select>
+
+        <label for="dong">동:</label>
+        <select id="dong" v-model="selectedDong" :disabled="!selectedGu">
+          <option v-for="dong in dongs" :key="dong" :value="dong">
+            {{ dong }}
+          </option>
+        </select>
+
+        <input type="text" v-model="planInfo.region" required />
         <br />
         시작 날짜:
         <input

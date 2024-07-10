@@ -11,7 +11,6 @@ const getPlanList = async () => {
   const { data } = await planApi.get();
   console.log("response : ", data);
 
-  plans.value = data.result.plans;
   plans.value = data.result.plans.map((plan) => ({
     ...plan,
     region: plan.region.split(","), // region 문자열을 쉼표 기준으로 분할하여 배열로 변환

@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import KakaoMapView from "@/components/plan_detail/KakaoMapView.vue";
 import PlanDetailListView from "@/components/plan_detail/PlanDetailListView.vue";
 import SidebarSearch from "@/components/plan_detail/SidebarSearch.vue";
+import RegionDisasterInfoView from "@/components/plan_detail/RegionDisasterInfoView.vue";
 import { onMounted } from "vue";
 
 const authStore = useAuthStore();
@@ -27,6 +28,7 @@ const planDetailArrays = ref("");
 const startDate = ref("");
 const endDate = ref("");
 const days = ref("");
+const planRegionList = ref("");
 
 const getDetail = async () => {
   const url = `/${id.value}`;
@@ -34,7 +36,8 @@ const getDetail = async () => {
   const { data } = await planApi.get(url);
   console.log("plan detail : ", data);
   plan.value = data.result;
-  console.log(plan.value);
+  plan.value.region = plan.value.region.split(",");
+  planRegionList.value = plan.value.region;
 };
 
 watch(
@@ -64,10 +67,6 @@ watch(
   },
   { deep: true }
 );
-
-onMounted(() => {
-  getDetail();
-});
 
 const isSidebarOpen = ref(false);
 
@@ -103,6 +102,8 @@ const updatePlan = async () => {
 const close = () => {
   isUpdateShow.value = false;
 };
+
+getDetail();
 </script>
 <template>
   <div
@@ -123,7 +124,9 @@ const close = () => {
       <div class="plan_info" style="margin-bottom: 20px">
         <div class="title-container">
           <h1 class="title" style="font-size: 30px">{{ plan.title }}</h1>
-          <h3 class="location-tag">#{{ plan.region }}</h3>
+          <h3 v-for="region in plan.region" :key="region" class="location-tag">
+            #{{ region }}
+          </h3>
         </div>
         <h3 style="color: gray">{{ plan.startDate }} - {{ plan.endDate }}</h3>
         <button
@@ -164,12 +167,15 @@ const close = () => {
       </div>
 
       <div class="main-content">
-        <div class="map">
-          <KakaoMapView
-            :key="planDetailArrays"
-            :planDetailArrays="planDetailArrays"
-            :planId="plan.id"
-          />
+        <div class="left-content">
+          <div class="map">
+            <KakaoMapView
+              :key="planDetailArrays"
+              :planDetailArrays="planDetailArrays"
+              :planId="plan.id"
+            />
+          </div>
+          <div><RegionDisasterInfoView :planRegionList="planRegionList" /></div>
         </div>
         <div class="content-area">
           <PlanDetailListView
@@ -240,6 +246,7 @@ const close = () => {
   width: 12%;
   text-align: center;
   padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
+  margin-right: 5px;
 }
 .main-content {
   display: flex;
@@ -247,14 +254,19 @@ const close = () => {
   margin-top: 10px; /* 헤더의 높이에 맞춰 조정 */
   overflow: hidden;
 }
-
+.left-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
 .map-container {
   width: 100%;
   background-color: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 70px 20px 0px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -265,7 +277,6 @@ const close = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
 }
 
 .content-area {

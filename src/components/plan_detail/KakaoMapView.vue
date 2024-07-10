@@ -281,7 +281,10 @@ preHospitalInfo();
 
 <template>
   <div class="map-container">
-    <div class="agencyType" style="background-color: white; width: 100%">
+    <div
+      class="agencyType"
+      style="background-color: white; width: 100%; padding: 10px"
+    >
       <button @click="getSafeMap(`police`)">
         <span class="safe-info-icon">🚔</span> 근처 경찰서
       </button>

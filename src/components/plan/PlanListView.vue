@@ -11,7 +11,11 @@ const getPlanList = async () => {
   const { data } = await planApi.get();
   console.log("response : ", data);
 
-  plans.value = data.result.plans;
+  plans.value = data.result.plans.map((plan) => ({
+    ...plan,
+    region: plan.region.split(","), // region 문자열을 쉼표 기준으로 분할하여 배열로 변환
+  }));
+
   console.log("plans : ", plans.value);
 };
 
@@ -188,18 +192,19 @@ getPlanList();
         <p class="blueberry font-semibold text-gray-400 text-xs">
           {{ plan.startDate }} ~ {{ plan.endDate }}
         </p>
-        <div class="ordernow flex flex-row justify-between items-center w-full">
-          <p
-            class="ordernow-text text-[#abd373] font-semibold group-hover:text-gray-800"
-          >
-            {{ plan.region }}
-          </p>
-          <p
-            class="btun4 lg:inline-flex items-center gap-3 group-hover:bg-white/10 bg-[#abd373] shadow-[10px_10px_150px_#ff9f0d] cursor-pointer py-2 px-4 text-sm font-semibold rounded-full butn"
-          >
-            더보기
-          </p>
-        </div>
+        <p
+          v-for="region in plan.region"
+          :key="region"
+          class="ordernow-text text-[#abd373] font-semibold group-hover:text-gray-800"
+        >
+          {{ region }}
+        </p>
+
+        <p
+          class="btun4 lg:inline-flex items-center gap-3 group-hover:bg-white/10 bg-[#abd373] shadow-[10px_10px_150px_#ff9f0d] cursor-pointer py-2 px-4 text-sm font-semibold rounded-full butn"
+        >
+          더보기
+        </p>
       </div>
 
       <div></div>

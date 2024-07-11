@@ -7,7 +7,8 @@ import { storeToRefs } from "pinia";
 import KakaoMapView from "@/components/plan_detail/KakaoMapView.vue";
 import PlanDetailListView from "@/components/plan_detail/PlanDetailListView.vue";
 import SidebarSearch from "@/components/plan_detail/SidebarSearch.vue";
-import { onMounted } from "vue";
+import RegionDisasterInfoView from "@/components/plan_detail/RegionDisasterInfoView.vue";
+import PlanUpdateView from "@/components/plan_detail/PlanUpdateView.vue";
 
 const authStore = useAuthStore();
 const { userInfo } = storeToRefs(authStore);
@@ -27,6 +28,7 @@ const planDetailArrays = ref("");
 const startDate = ref("");
 const endDate = ref("");
 const days = ref("");
+const planRegionList = ref("");
 
 const getDetail = async () => {
   const url = `/${id.value}`;
@@ -34,7 +36,8 @@ const getDetail = async () => {
   const { data } = await planApi.get(url);
   console.log("plan detail : ", data);
   plan.value = data.result;
-  console.log(plan.value);
+  plan.value.region = plan.value.region.split(",");
+  planRegionList.value = plan.value.region;
 };
 
 watch(
@@ -47,7 +50,7 @@ watch(
     endDate.value = new Date(plan.value.endDate);
 
     const timeDifference = endDate.value - startDate.value;
-    const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+    const dayDifference = timeDifference / (1000 * 60 * 60 * 24) + 1;
     console.log("여행 일수 호출 : ", Math.ceil(dayDifference));
 
     days.value = Math.ceil(dayDifference); // 날짜 차이를 반올림해서 반환합니다
@@ -64,10 +67,6 @@ watch(
   },
   { deep: true }
 );
-
-onMounted(() => {
-  getDetail();
-});
 
 const isSidebarOpen = ref(false);
 
@@ -88,21 +87,12 @@ const updateShow = () => {
   isUpdateShow.value = !isUpdateShow.value;
 };
 
-const updatePlan = async () => {
-  planApi
-    .put(`/${id.value}`, plan.value)
-    .then((response) => {
-      console.log(response.data);
-      getDetail();
-      close();
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
 const close = () => {
+  getDetail();
   isUpdateShow.value = false;
 };
+
+getDetail();
 </script>
 <template>
   <div
@@ -123,12 +113,15 @@ const close = () => {
       <div class="plan_info" style="margin-bottom: 20px">
         <div class="title-container">
           <h1 class="title" style="font-size: 30px">{{ plan.title }}</h1>
-          <h3 class="location-tag">#{{ plan.region }}</h3>
+          <h3 v-for="region in plan.region" :key="region" class="location-tag">
+            #{{ region }}
+          </h3>
         </div>
-        <h3 style="color: gray">{{ plan.startDate }} - {{ plan.endDate }}</h3>
+        <h3 style="color: gray">{{ plan.startDate }} ~ {{ plan.endDate }}</h3>
         <button
           class="updatePlan-btn"
           @click="updateShow"
+          v-show="!isGuest"
           style="
             border-radius: 99px;
             border: 2px solid #333; /* 경계선 추가 및 색상 지정 */
@@ -136,44 +129,27 @@ const close = () => {
         >
           수정
         </button>
-        <div v-if="isUpdateShow" class="modal-overlay">
-          <div class="modal">
-            <button @click="close" style="margin-bottom: 5px">X</button>
-            <div class="heading">Edit Plan</div>
-            <form @submit.prevent="updatePlan">
-              <input class="update-info" type="text" v-model="plan.title" />
-              <input class="update-info" type="text" v-model="plan.region" />
-              <div class="update-info">
-                <input
-                  type="date"
-                  v-model="plan.startDate"
-                  :max="plan.endDate"
-                />
-                ~
-                <input
-                  type="date"
-                  v-model="plan.endDate"
-                  :min="plan.startDate"
-                />
-              </div>
-              <input
-                class="update-btn"
-                type="submit"
-                value="수정하기"
-                v-show="!isGuest"
-              />
-            </form>
-          </div>
-        </div>
+        <PlanUpdateView
+          v-if="isUpdateShow"
+          :plan="plan"
+          :id="id"
+          :planRegionList="planRegionList"
+          @close="close"
+        />
       </div>
 
       <div class="main-content">
-        <div class="map">
-          <KakaoMapView
-            :key="planDetailArrays"
-            :planDetailArrays="planDetailArrays"
-            :planId="plan.id"
-          />
+        <div class="left-content">
+          <div class="map">
+            <KakaoMapView
+              :key="planDetailArrays"
+              :planDetailArrays="planDetailArrays"
+              :planId="plan.id"
+            />
+          </div>
+          <div class="disaster">
+            <RegionDisasterInfoView :planRegionList="planRegionList" />
+          </div>
         </div>
         <div class="content-area">
           <PlanDetailListView
@@ -244,6 +220,7 @@ const close = () => {
   width: 12%;
   text-align: center;
   padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
+  margin-right: 5px;
 }
 .main-content {
   display: flex;
@@ -251,14 +228,22 @@ const close = () => {
   margin-top: 10px; /* 헤더의 높이에 맞춰 조정 */
   overflow: hidden;
 }
-
+.left-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-left: 1%;
+}
+.disaster {
+  margin-top: 10%;
+}
 .map-container {
   width: 100%;
   background-color: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -269,7 +254,6 @@ const close = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
 }
 
 .content-area {
@@ -291,18 +275,6 @@ const close = () => {
   border: none;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
 /* 수정 모달 */
 .updatePlan-btn {
   border-radius: 99px;
@@ -310,26 +282,7 @@ const close = () => {
   padding: 5px 10px; /* location-tag의 내용과 여백 조절 */
   font-size: 12px;
 }
-.modal {
-  /* background: white;
-  padding: 20px;
-  border-radius: 5px;
-  width: 300px;
-  max-width: 100%;
-  z-index: 9999; */
-  max-width: 400px;
-  background: #f8f9fd;
-  background: linear-gradient(
-    0deg,
-    rgb(255, 255, 255) 0%,
-    rgb(244, 247, 251) 100%
-  );
-  border-radius: 40px;
-  padding: 25px 35px;
-  border: 5px solid rgb(255, 255, 255);
-  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
-  margin: 20px;
-}
+
 .heading {
   text-align: center;
   font-weight: 900;
@@ -339,36 +292,6 @@ const close = () => {
 
 .form {
   margin-top: 20px;
-}
-
-.update-info {
-  width: 100%;
-  background: white;
-  border: none;
-  padding: 15px 20px;
-  border-radius: 20px;
-  margin-top: 15px;
-  box-shadow: #cff0ff 0px 10px 10px -5px;
-  border-inline: 2px solid transparent;
-  display: flex;
-  align-items: center;
-}
-.update-btn {
-  display: block;
-  width: 100%;
-  font-weight: bold;
-  background: linear-gradient(
-    45deg,
-    rgb(16, 137, 211) 0%,
-    rgb(18, 177, 209) 100%
-  );
-  color: white;
-  padding-block: 15px;
-  margin: 20px auto;
-  border-radius: 20px;
-  box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
-  border: none;
-  transition: all 0.2s ease-in-out;
 }
 
 .form .update-btn {

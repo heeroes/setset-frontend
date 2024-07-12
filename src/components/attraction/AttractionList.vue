@@ -16,10 +16,10 @@ const props = defineProps({
   hasMore: Boolean,
   currentPage: Number,
   totalPages: Number,
-  maxLength : Number,
+  maxLength: Number,
 });
 const maxLength = props.maxLength;
-console.log("pros.maxLength",maxLength)
+console.log("pros.maxLength", maxLength);
 const totalPages = props.totalPages;
 const itemsPerPage = 5;
 const totalPageGroups = computed(() =>
@@ -190,7 +190,6 @@ getPlanList();
 </template>
 
 <style scoped>
-
 .attraction-section {
   margin-bottom: 40px;
 }
@@ -229,11 +228,12 @@ getPlanList();
   border-radius: 4px;
 }
 .dropdown {
-  position: absolute; /* 드롭다운 버튼에 대해 position: absolute; 설정 */
-  top: 10px; /* Adjust top position as needed */
-  right: 10px; /* Adjust right position as needed */
-  cursor: pointer;
+  bottom: 100%;
+  left: 95%;
+  display: inline-block; /* 인라인 블록으로 변경하여 버튼 옆에 위치 */
+  position: relative;
 }
+
 .dropdown-content {
   position: absolute;
   top: 50%;

@@ -163,17 +163,23 @@ h5 {
   font-style: italic;
 }
 .dropdown {
-  cursor: pointer;
+  display: inline-block; /* 인라인 블록으로 변경하여 버튼 옆에 위치 */
+  position: relative;
 }
 
 .dropdown-content {
   position: absolute;
-  top: 27%;
-  left: 11%;
+  top: 50%; /* 버튼 바로 아래에 위치 */
+  left: 90%; /* 버튼의 왼쪽에 맞춤 */
   background-color: white;
   border: 1px solid #ccc;
   z-index: 1000;
+  width: 120px; /* 너비 조정 */
+  margin-top: 5px; /* 버튼과의 간격 조정 */
 }
+
+/* 나머지 스타일은 그대로 유지 */
+
 
 .dropdown-content button {
   display: block;

@@ -7,7 +7,7 @@ const router = useRouter();
 const attractions = ref([]);
 
 const attractionRanking = async () => {
-  const url = `http://setset.site:8080/api/v1/attraction/rank`;
+  const url = `https://setset.site/api/v1/attraction/rank`;
   const { data } = await axios.get(url);
   console.log("response : ", data);
   attractions.value = data.result.map((attraction) => ({

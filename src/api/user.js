@@ -2,7 +2,7 @@ import axios from "axios";
 import { localAxios } from "@/api/http-commons";
 
 const userApi = axios.create({
-  baseURL: "http://setset.site:8080/api/v1/user",
+  baseURL: "https://setset.site/api/v1/user",
 });
 
 userApi.interceptors.request.use((config) => {

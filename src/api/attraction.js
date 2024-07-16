@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const attractionApi = axios.create({
-  baseURL: "http://localhost/api/v1/attraction",
+  baseURL: "https://setset.site/api/v1/attraction",
 });
 
 attractionApi.interceptors.request.use((config) => {

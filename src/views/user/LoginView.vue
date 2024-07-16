@@ -9,17 +9,11 @@ const GOOGLE_URL =
 const user = ref(null);
 
 const login = async (url) => {
-  // try {
-  //   window.location.href = url;
-  // } catch (error) {
-  //   console.log("에러");
-  //   alert("실패");
-  // }
-  try{
-    const response = await fetch(url)
-    console.log(response)
-  }catch(error){
-    console.error("로그인 실패")
+  try {
+    window.location.href = url;
+  } catch (error) {
+    console.log("에러");
+    alert("실패");
   }
 };
 </script>

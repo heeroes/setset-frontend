@@ -28,7 +28,7 @@ const route = useRoute();
 const attId = ref(route.params.id);
 const plans = ref({});
 const getAttractionDetail = async () => {
-  const url = `http://localhost/api/v1/attraction/${attId.value}`;
+  const url = `http://setset.site:8080/api/v1/attraction/${attId.value}`;
   const { data } = await axios.get(url);
   attraction.value = data.result;
   console.log("attraction", attraction);

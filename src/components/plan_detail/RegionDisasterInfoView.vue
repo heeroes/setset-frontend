@@ -16,7 +16,7 @@ console.log("props selectedRegion : ", selectedRegion);
 
 const getDisasterAlarm = async (region) => {
   console.log("get region ", region);
-  const url = `http://localhost/api/v1/safe/info/disaster/search?region=${region}&size=1000`;
+  const url = `https://setset.site:8080/api/v1/safe/info/disaster/search?region=${region}&size=1000`;
   const { data } = await axios.get(url);
   console.log("response : ", data.result);
   alarms.value.set(region, data.result.alarms);

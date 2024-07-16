@@ -9,7 +9,7 @@ const itemsPerPage = 5;
 const pagesPerGroup = 5;
 
 const getDisasterAlarm = async () => {
-  const url = "http://localhost/api/v1/safe/info/disaster";
+  const url = "http://setset.site:8080/api/v1/safe/info/disaster";
   const { data } = await axios.get(url);
   console.log("response : ", data.result);
   alarms.value = data.result.alarms;

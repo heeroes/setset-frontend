@@ -78,7 +78,7 @@ const itemsPerPage = 5;
 const pagesPerGroup = 5;
 
 const getNewData = async () => {
-  const url = `http://setset.site:8080/api/v1/safe/info/news`;
+  const url = `https://setset.site/api/v1/safe/info/news`;
   const { data } = await axios.get(url);
   console.log("response : ", data.result);
   news.value = data.result.news;

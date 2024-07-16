@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const planApi = axios.create({
-  baseURL: "http://localhost:80/api/v1/plan",
+  baseURL: "https://setset.site/api/v1/plan",
 });
 
 planApi.interceptors.request.use((config) => {

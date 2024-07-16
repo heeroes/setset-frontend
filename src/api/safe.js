@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const safeApi = axios.create({
-  baseURL: "http://setset.site:8080/api/v1/safe",
+  baseURL: "https://setset.site/api/v1/safe",
 });
 
 safeApi.interceptors.request.use((config) => {

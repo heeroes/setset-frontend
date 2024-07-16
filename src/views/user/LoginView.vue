@@ -4,16 +4,22 @@ import { ref } from "vue";
 const NAVER_URL =
   "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=QNfPn8BRWlnEF4unf3Q9&state=hLiDdL2uhPtsftcU&redirect_uri=http://localhost:80/api/v1/user/login/naver";
 const GOOGLE_URL =
-  "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=358553454680-ptcnidp5s8vufv27nr5l0l63cs9db48l.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A80%2Fapi%2Fv1%2Fuser%2Flogin%2Fgoogle&response_type=code&scope=email%20profile&approval_prompt=force&access_type=offline&service=lso&o2v=1&ddm=0&flowName=GeneralOAuthFlow";
+  "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=358553454680-ptcnidp5s8vufv27nr5l0l63cs9db48l.apps.googleusercontent.com&redirect_uri=http://setset.site:8080/api/v1/user/login/google&response_type=code&scope=email%20profile&approval_prompt=force&access_type=offline&service=lso&o2v=1&ddm=0&flowName=GeneralOAuthFlow";
 
 const user = ref(null);
 
 const login = async (url) => {
-  try {
-    window.location.href = url;
-  } catch (error) {
-    console.log("에러");
-    alert("실패");
+  // try {
+  //   window.location.href = url;
+  // } catch (error) {
+  //   console.log("에러");
+  //   alert("실패");
+  // }
+  try{
+    const response = await fetch(url)
+    console.log(response)
+  }catch(error){
+    console.error("로그인 실패")
   }
 };
 </script>

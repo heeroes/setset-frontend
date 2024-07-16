@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const cityApi = axios.create({
-  baseURL: "http://localhost:80/api/v1/city",
+  baseURL: "http://setset.site:8080/api/v1/city",
 });
 
 cityApi.interceptors.request.use((config) => {

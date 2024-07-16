@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const groupApi = axios.create({
-  baseURL: "http://localhost:80/api/v1/group",
+  baseURL: "http://setset.site:8080/api/v1/group",
 });
 
 groupApi.interceptors.request.use((config) => {

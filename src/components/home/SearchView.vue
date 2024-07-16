@@ -14,7 +14,7 @@ const isRecommandDisplay = ref(false);
 const isFetchingKeywords = ref(false);
 const getRecommandKeywords = async () => {
   isFetchingKeywords.value = true;
-  const url = "http://localhost/api/v1/chatGPT/recommand";
+  const url = "http://setset.site:8080/api/v1/chatGPT/recommand";
   const { data } = await axios.post(url, {});
   console.log(data.result);
   recommendedKeywords.value = data.result;
